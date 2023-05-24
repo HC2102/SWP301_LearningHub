@@ -3,10 +3,7 @@ package swp391.group2.learninghub.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import org.springframework.cglib.core.Local;
 
-
-import java.time.LocalDate;
 import java.util.Date;
 
 @Entity

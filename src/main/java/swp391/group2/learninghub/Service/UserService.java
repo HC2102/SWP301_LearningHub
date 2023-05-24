@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface UserService {
     List<User> showUsers();
-    User register(User newUser);
+    User register(User newUser) throws Exception;
 }

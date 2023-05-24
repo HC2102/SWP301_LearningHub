@@ -27,20 +27,15 @@ public class UserController {
     }
     @PostMapping("/register")
     ResponseEntity<ResponseObject> userRegister(@RequestBody User newUser){
-        LocalDateTime now = LocalDateTime.now();
-        newUser.setActive(true);
-        newUser.setRoleId("USER");
-        newUser.setSignup_date(Date.from(now.toInstant(ZoneOffset.UTC)));
         try{
-            //check if fields are valid
-            
+
             userService.register(newUser);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success","account registed successfull",newUser)
             );
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject("fail","account fail to add reason: "+e.getMessage(),null)
+                    new ResponseObject("fail","account fail to add, reason: "+e.getMessage(),null)
             );
         }
     }
