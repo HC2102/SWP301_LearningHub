@@ -8,14 +8,16 @@ import swp391.group2.learninghub.Model.Feature;
 import java.util.List;
 
 @Service
-public class FeatureServieImpl implements  FeatureService{
+public class FeatureServiceImpl implements FeatureService{
     @Autowired
     private final FeatureDAO featureDAO;
-    public FeatureServieImpl(FeatureDAO featureDAO) {
+    @Autowired
+    public FeatureServiceImpl(FeatureDAO featureDAO) {
         this.featureDAO = featureDAO;
     }
+
     @Override
-    public List<Feature> allFeatures() {
-        return null;
+    public List<Feature> showAll() {
+        return featureDAO.findAll();
     }
 }

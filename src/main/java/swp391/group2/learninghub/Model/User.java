@@ -86,4 +86,17 @@ public class User {
     public void setSignup_date(Date signup_date) {
         this.signup_date = signup_date;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", real_name='" + real_name + '\'' +
+                ", phone_num='" + phone_num + '\'' +
+                ", password='" + password + '\'' +
+                ", roleId='" + roleId + '\'' +
+                ", isActive=" + isActive +
+                ", signup_date=" + signup_date +
+                '}';
+    }
 }

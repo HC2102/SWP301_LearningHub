@@ -9,7 +9,7 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 @Service
-public class UserServiceImpl implements UserService{
+    public class UserServiceImpl implements UserService{
     private final UserDAO userDAO;
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
@@ -39,5 +39,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<User> showUsers() {
         return userDAO.findAll();
+    }
+
+    @Override
+    public List<User> findByEmail(String name) {
+        return userDAO.findByEmail(name);
+    }
+
+    @Override
+    public void save(User newUser) {
+        userDAO.save(newUser);
     }
 }
