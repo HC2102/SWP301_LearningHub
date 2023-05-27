@@ -2,10 +2,11 @@ package swp391.group2.learninghub.API;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import swp391.group2.learninghub.Model.Feature;
+import swp391.group2.learninghub.Model.ResponseObject;
 import swp391.group2.learninghub.Model.User;
 import swp391.group2.learninghub.Service.FeatureService;
 
@@ -40,7 +41,19 @@ public class FeatureController {
         }catch (Exception e){
             return null;
         }
+    }
 
+    @PutMapping("/active")
+    ResponseEntity<ResponseObject> setActive(@RequestParam("id") int featureId, @RequestParam("mess")String message){
+        try {
+            service.setActive(featureId,message);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject
+                    ("Success","Active status changed successfully feature id: "+featureId,message.toString()));
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject
+                    ("Fail","Fail to change active status reason: "+e.getMessage(),message.toString()));
+        }
     }
 
 }

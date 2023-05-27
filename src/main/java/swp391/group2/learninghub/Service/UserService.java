@@ -9,7 +9,6 @@ import java.util.List;
 public interface UserService{
     List<User> showUsers();
     User register(User newUser) throws Exception;
-//    List<User> findByEmail(String name);
     void save(User newUser);
     List<User> findByEmail(String name);
 

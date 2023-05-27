@@ -20,4 +20,21 @@ public class FeatureServiceImpl implements FeatureService{
     public List<Feature> showAll() {
         return featureDAO.findAll();
     }
+
+    @Override
+    public void setActive(int id,String mess) throws Exception {
+        Feature feature = (Feature)featureDAO.findById(id).get();
+        feature.setDescription(mess);
+        System.out.println(feature.toString());
+        if(feature == null){
+            throw new Exception("item is null");
+        }else{
+            if(feature.isIs_Active()){
+                feature.setIs_Active(false);
+            }else{
+                feature.setIs_Active(true);
+            }
+            featureDAO.save(feature);
+        }
+    }
 }
