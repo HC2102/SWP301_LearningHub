@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface FeatureService {
     public List<Feature> showAll();
-
+    public void setActive(int id, String mess) throws Exception;
 }
