@@ -4,20 +4,22 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import swp391.group2.learninghub.exception.NotFoundException;
+import swp391.group2.learninghub.exception.InternalServerErrorException;
 
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
+
 
 @Controller
-public class CustomErrorController implements ErrorController, swp391.group2.learninghub.API.ErrorController {
+@RequestMapping("/api/v1/error")
+public class CustomErrorController implements ErrorController {
 
     private static final String ERROR_PATH = "/error";
 
     @RequestMapping(ERROR_PATH)
     public String handleError(Model model) {
         // Add your custom error handling logic here
-        Exception exception = (Exception) model.getAttribute("javax.servlet.error.exception");
-        int statusCode = (int) model.getAttribute("javax.servlet.error.status_code");
+        Exception exception = (Exception) model.getAttribute("jakarta.servlet.error.exception");
+        int statusCode = (int) model.getAttribute("jakarta.servlet.error.status_code");
 
         String errorMessage;
         if (exception != null) {
@@ -44,10 +46,5 @@ public class CustomErrorController implements ErrorController, swp391.group2.lea
         return "error";
     }
 
-
-    @Override
-    public String getErrorPath() {
-        return ERROR_PATH;
-    }
 }
 
