@@ -53,6 +53,10 @@ public class UserController {
     ResponseEntity<ResponseObject> userLogin(@RequestBody LoginRequest loginRequest) {
         List<User> u1=userService.findByEmail(loginRequest.getEmail().trim());
         if(u1.get(0).getPassword().trim().equals(loginRequest.getPass().trim())) {
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
             session.setAttribute("user",u1.get(0));
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success", "Login Successful!", u1)
@@ -67,7 +71,11 @@ public class UserController {
     @PutMapping("/changepassword")
     String changePass(@RequestBody ChangePass changePass) {
         User u=(User) session.getAttribute("user");
+<<<<<<< Updated upstream
         System.out.println(u.toString());
+=======
+
+>>>>>>> Stashed changes
         if(u.getPassword().trim().equals(changePass.getOldpass().trim())) {
             if(changePass.getNewpass().trim().equals("")||changePass.getVerpass().trim().equals("")){
                 return  "verification password and new password are not blank";

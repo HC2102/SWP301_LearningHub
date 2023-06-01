@@ -6,6 +6,7 @@ import swp391.group2.learninghub.DAO.FeatureDAO;
 import swp391.group2.learninghub.Model.Feature;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FeatureServiceImpl implements FeatureService{
@@ -36,6 +37,19 @@ public class FeatureServiceImpl implements FeatureService{
                 feature.setIs_Active(true);
             }
             featureDAO.save(feature);
+        }
+    }
+
+    @Override
+    public Feature findFeature(int id) {
+        Optional<Feature> f=featureDAO.findById(id);
+        Optional<Feature> optionalFeature = featureDAO.findById(id);
+
+        if (optionalFeature.isPresent()) {
+            Feature feature = optionalFeature.get();
+            return feature;
+        } else {
+            return null;
         }
     }
 }
