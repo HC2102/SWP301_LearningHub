@@ -3,13 +3,16 @@ package swp391.group2.learninghub.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import java.sql.Date;
+
+import java.util.Date;
+
 
 @Entity
 public class FlashcardSet {
     @Id
     private int id;
-    private String userId;
+    private String user_id;
+
     private String title;
     private String description;
     private Date createdDate;
@@ -19,9 +22,9 @@ public class FlashcardSet {
     public FlashcardSet() {
     }
 
-    public FlashcardSet(int id, String userId, String title, String description, Date createdDate, boolean isActive, boolean isLearned) {
+    public FlashcardSet(int id, String user_id, String title, String description, Date createdDate, boolean isActive, boolean isLearned) {
         this.id = id;
-        this.userId = userId;
+        this.user_id = user_id;
         this.title = title;
         this.description = description;
         this.createdDate = createdDate;
@@ -31,20 +34,13 @@ public class FlashcardSet {
 
     // Getters and setters
 
-    public int getId() {
-        return id;
+
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     public String getTitle() {
@@ -85,5 +81,18 @@ public class FlashcardSet {
 
     public void setLearned(boolean learned) {
         isLearned = learned;
+    }
+
+    @Override
+    public String toString() {
+        return "FlashcardSet{" +
+                "id=" + id +
+                ", user_id='" + user_id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", created_date=" + createdDate +
+                ", isActive=" + isActive +
+                ", isLearned=" + isLearned +
+                '}';
     }
 }

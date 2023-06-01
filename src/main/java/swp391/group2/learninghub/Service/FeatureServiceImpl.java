@@ -30,12 +30,17 @@ public class FeatureServiceImpl implements FeatureService{
         if(feature == null){
             throw new Exception("item is null");
         }else{
-            if(feature.isIs_Active()){
-                feature.setIs_Active(false);
+            if(feature.isActive()){
+                feature.setActive(false);
             }else{
-                feature.setIs_Active(true);
+                feature.setActive(true);
             }
             featureDAO.save(feature);
         }
+    }
+
+    @Override
+    public Feature findFeatureById(int id) {
+        return (Feature) featureDAO.findById(id).get();
     }
 }

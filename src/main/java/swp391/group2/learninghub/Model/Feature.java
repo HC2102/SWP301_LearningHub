@@ -8,16 +8,16 @@ public class Feature {
     @Id
     private int id;
     private String name;
-    private boolean is_Active;
+    private boolean isActive;
     private String description;
 
     public Feature() {
     }
 
-    public Feature(int id, String name, boolean is_Active, String description) {
+    public Feature(int id, String name, boolean isActive, String description) {
         this.id = id;
         this.name = name;
-        this.is_Active = is_Active;
+        this.isActive = isActive;
         this.description = description;
     }
 
@@ -37,12 +37,12 @@ public class Feature {
         this.name = name;
     }
 
-    public boolean isIs_Active() {
-        return is_Active;
+    public boolean isActive() {
+        return isActive;
     }
 
-    public void setIs_Active(boolean is_Active) {
-        this.is_Active = is_Active;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public String getDescription() {
@@ -58,7 +58,7 @@ public class Feature {
         return "Feature{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", is_Active=" + is_Active +
+                ", is_Active=" + isActive +
                 ", description='" + description + '\'' +
                 '}';
     }
