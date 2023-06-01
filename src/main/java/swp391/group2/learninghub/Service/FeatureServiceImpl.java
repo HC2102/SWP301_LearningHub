@@ -11,6 +11,7 @@ import java.util.List;
 public class FeatureServiceImpl implements FeatureService{
     @Autowired
     private final FeatureDAO featureDAO;
+
     @Autowired
     public FeatureServiceImpl(FeatureDAO featureDAO) {
         this.featureDAO = featureDAO;

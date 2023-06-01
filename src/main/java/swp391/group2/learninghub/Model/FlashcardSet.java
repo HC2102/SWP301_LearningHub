@@ -3,13 +3,16 @@ package swp391.group2.learninghub.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+
 import java.util.Date;
+
 
 @Entity
 public class FlashcardSet {
     @Id
     private int id;
     private String user_id;
+
     private String title;
     private String description;
     private Date createdDate;
@@ -29,13 +32,8 @@ public class FlashcardSet {
         this.isLearned = isLearned;
     }
 
-    public int getId() {
-        return id;
-    }
+    // Getters and setters
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getUser_id() {
         return user_id;
@@ -97,5 +95,4 @@ public class FlashcardSet {
                 ", isLearned=" + isLearned +
                 '}';
     }
-
 }
