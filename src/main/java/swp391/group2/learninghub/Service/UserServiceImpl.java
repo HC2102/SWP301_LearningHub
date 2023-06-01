@@ -1,16 +1,27 @@
 package swp391.group2.learninghub.Service;
 
+import jakarta.mail.MessagingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import swp391.group2.learninghub.DAO.UserDAO;
+import swp391.group2.learninghub.Model.DataMailDTO;
 import swp391.group2.learninghub.Model.User;
+import swp391.group2.learninghub.Model.sdi.ClientSdi;
+import swp391.group2.learninghub.utils.Const;
+import swp391.group2.learninghub.utils.DataUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @Service
     public class UserServiceImpl implements UserService{
     private final UserDAO userDAO;
+    @Autowired
+    private MailService mailService;
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
@@ -47,8 +58,6 @@ import java.util.List;
     }
 
     @Override
-<<<<<<< Updated upstream
-=======
     public Boolean create(ClientSdi sdi) {
         try {
             DataMailDTO dataMail = new DataMailDTO();
@@ -62,10 +71,11 @@ import java.util.List;
             props.put("username", sdi.getUsername());
             props.put("password",pass);
             dataMail.setProps(props);
-
             mailService.sendHtmlMail(dataMail, Const.TEMPLATE_FILE_NAME.CLIENT_REGISTER);
 
-
+            List<User> u=findByEmail(sdi.getUsername());
+            u.get(0).setPassword(pass);
+            save(u.get(0));
 
             return true;
         } catch (MessagingException exp){
@@ -75,7 +85,6 @@ import java.util.List;
     }
 
     @Override
->>>>>>> Stashed changes
     public void save(User newUser) {
         userDAO.save(newUser);
     }

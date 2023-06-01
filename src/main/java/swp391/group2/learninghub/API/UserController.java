@@ -9,10 +9,10 @@ import swp391.group2.learninghub.Model.ChangePass;
 import swp391.group2.learninghub.Model.LoginRequest;
 import swp391.group2.learninghub.Model.ResponseObject;
 import swp391.group2.learninghub.Model.User;
+import swp391.group2.learninghub.Model.sdi.ClientSdi;
 import swp391.group2.learninghub.Service.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -34,7 +34,6 @@ public class UserController {
     @PostMapping("/register")
     ResponseEntity<ResponseObject> userRegister(@RequestBody User newUser){
         try{
-
             userService.register(newUser);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success","account registed successfull",newUser)
@@ -55,7 +54,7 @@ public class UserController {
     @GetMapping ("/login")
     ResponseEntity<ResponseObject> userLogin(@RequestBody LoginRequest loginRequest) {
         List<User> u1=userService.findByEmail(loginRequest.getEmail().trim());
-        if(u1.get(0).getPassword().trim().equals(loginRequest.getPass().trim())) {
+        if(u1.get(0).getPassword().trim().equals(loginRequest.getPassword().trim())) {
             session.setAttribute("user",u1.get(0));
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success", "Login Successful!", u1)
@@ -124,7 +123,25 @@ public ResponseEntity<ResponseObject> getUserProfile(@PathVariable("email") Stri
         );
     }
 }
+    @PostMapping(value = "/forgetpass")
+    public ResponseEntity<ResponseObject> forgetPassWord(
+            @RequestParam(name="email",required = false,defaultValue = "") String email
 
+    ) {
+        List<User> u=userService.findByEmail(email);
+        if(u.size()>0) {
+            ClientSdi sdi=new ClientSdi(u.get(0).getReal_name(),email,email);
+            userService.create(sdi);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("success", "Send email success!",sdi)
+            );
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResponseObject("failed","Email not found!",
+                            "")
+            );
+        }
+    }
 
 
 //    @GetMapping("/protected")

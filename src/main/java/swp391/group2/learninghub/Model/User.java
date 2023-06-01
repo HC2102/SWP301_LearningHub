@@ -12,12 +12,11 @@ public class User {
     private String email;
     private String real_name;
     private String phone_num;
-            private String password;
+    private String password;
     private String roleId;
     private boolean isActive;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date signup_date;
-    private String role;
 
     public User() {
     }
@@ -101,11 +100,4 @@ public class User {
                 '}';
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }
