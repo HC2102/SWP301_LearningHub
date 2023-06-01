@@ -11,4 +11,6 @@ import java.util.List;
 public interface FlashcardSetDAO extends JpaRepository<FlashcardSet,Integer> {
     @Query("select s from FlashcardSet s where s.user_id= :email AND s.isActive= true")
     public List<FlashcardSet> showUserFlashcardSetById(@Param("email")String email);
+
+    FlashcardSet createFlashCardSet(FlashcardSet flashCardSet);
 }

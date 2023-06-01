@@ -55,6 +55,19 @@ public class FlashcardController {
                     new ResponseObject("fail","cannot deleted card: "+id+" reason: "+e.getMessage(),null)
             );
         }
-
     }
+    @GetMapping("/test")
+    public String test(){
+        return "success";
+    }
+//    @PostMapping("/")
+//    public ResponseEntity<ResponseObject> createFlashCardSet(@RequestBody FlashcardSet flashCardSet) {
+//        try {
+//            FlashcardSet createdSet = flashcardService.createFlashCardSet(flashCardSet);
+//            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","ok to create Flash Card Set",createdSet));
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail","Failed to create Flash Card Set: " + e.getMessage(),null));
+//        }
+//    }
 }

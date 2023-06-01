@@ -39,4 +39,9 @@ public class FlashcardServiceImpl implements FlashcardService{
             throw new Exception("cannot delete card, reason: "+e.getMessage());
         }
     }
+
+    @Override
+    public FlashcardSet createFlashCardSet(FlashcardSet flashCardSet) {
+        return setDAO.createFlashCardSet(flashCardSet);
+    }
 }

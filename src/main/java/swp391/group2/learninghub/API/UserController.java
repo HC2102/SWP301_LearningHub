@@ -126,63 +126,27 @@ public ResponseEntity<ResponseObject> getUserProfile(@PathVariable("email") Stri
     }
 }
 
-    @Autowired
-    private SessionManager sessionManager;
 
-    @GetMapping("/logout")
-    public ResponseEntity<ResponseObject> logout() {
-        String sessionId = session.getId();
-        sessionManager.invalidateSession(sessionId);
 
-        session.invalidate();
+//    @GetMapping("/protected")
+//    public ResponseEntity<ResponseObject> protectedRoute() {
+//        String sessionId = session.getId();
+//        UserSession userSession = sessionManager.getSession(sessionId);
+//        if (userSession != null && userSession.isValid()) {
+//            userSession.setLastActivityTime(LocalDateTime.now());
+//
+//            // Perform protected operations here
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    new ResponseObject("success", "Protected Route - User: " + userSession.getEmail(), null)
+//            );
+//        } else {
+//            session.invalidate();
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+//                    new ResponseObject("fail", "Session expired. Please login again.", null)
+//            );
+//        }
+//    }
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("success", "Logout successful", null)
-        );
-    }
-
-    @GetMapping("/protected")
-    public ResponseEntity<ResponseObject> protectedRoute() {
-        String sessionId = session.getId();
-        UserSession userSession = sessionManager.getSession(sessionId);
-        if (userSession != null && userSession.isValid()) {
-            userSession.setLastActivityTime(LocalDateTime.now());
-
-            // Perform protected operations here
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success", "Protected Route - User: " + userSession.getEmail(), null)
-            );
-        } else {
-            session.invalidate();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    new ResponseObject("fail", "Session expired. Please login again.", null)
-            );
-        }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<ResponseObject> userlogin(@RequestBody LoginRequest loginRequest) {
-        List<User> users = userService.findByEmail(loginRequest.getEmail().trim());
-        if (!users.isEmpty() && users.get(0).getPassword().trim().equals(loginRequest.getPass().trim())) {
-            User user = users.get(0);
-
-            UserSession userSession = new UserSession();
-            userSession.setEmail(user.getEmail());
-            userSession.setFeatureStatus(user.getRole());
-            userSession.setLastActivityTime(LocalDateTime.now());
-
-            String sessionId = session.getId();
-            sessionManager.createSession(sessionId, userSession);
-
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success", "Login Successful!", user)
-            );
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("failed", "Email or Password invalid!", null)
-            );
-        }
-    }
 
 
 }
