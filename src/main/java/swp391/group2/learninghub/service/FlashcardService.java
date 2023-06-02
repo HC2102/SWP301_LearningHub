@@ -13,4 +13,5 @@ public interface FlashcardService {
     public Flashcard create(Flashcard newfc) throws Exception;
 
     public void archiveSetById(int id)throws Exception;
+    public boolean setLearn(int id)throws Exception;
 }

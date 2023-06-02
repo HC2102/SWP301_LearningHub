@@ -75,6 +75,17 @@ public class FlashcardController {
             );
         }
     }
+    @PutMapping("/learn")
+    ResponseEntity<ResponseObject> setLearned(@RequestParam("id") int setId){
+        try{
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("success","change status successfully",
+                            flashcardService.setLearn(setId)));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+              new ResponseObject("Error","can not set the status to set", e.getMessage()));
+        }
+    }
 
     /*for flashcard card services*/
     @GetMapping("/card")
@@ -119,7 +130,7 @@ public class FlashcardController {
     /*Miscellaneous function*/
     private void isFeatureActive() throws Exception {
         Feature feature = featureService.findFeatureById(FEATURE_ID);
-        if(feature.isActive()){
+        if(!feature.isActive()){
             throw new Exception("Feature is disable: "+feature.getDescription());
         }
     }

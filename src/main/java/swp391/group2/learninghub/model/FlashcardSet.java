@@ -11,7 +11,7 @@ import java.util.Date;
 public class FlashcardSet {
     @Id
     private int id;
-    private String user_id;
+    private String userId;
 
     private String title;
     private String description;
@@ -22,9 +22,9 @@ public class FlashcardSet {
     public FlashcardSet() {
     }
 
-    public FlashcardSet(int id, String user_id, String title, String description, Date createdDate, boolean isActive, boolean isLearned) {
+    public FlashcardSet(int id, String userId, String title, String description, Date createdDate, boolean isActive, boolean isLearned) {
         this.id = id;
-        this.user_id = user_id;
+        this.userId = userId;
         this.title = title;
         this.description = description;
         this.createdDate = createdDate;
@@ -34,13 +34,20 @@ public class FlashcardSet {
 
     // Getters and setters
 
-
-    public String getUser_id() {
-        return user_id;
+    public int getId() {
+        return id;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getTitle() {
@@ -87,7 +94,7 @@ public class FlashcardSet {
     public String toString() {
         return "FlashcardSet{" +
                 "id=" + id +
-                ", user_id='" + user_id + '\'' +
+                ", user_id='" + userId + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", created_date=" + createdDate +

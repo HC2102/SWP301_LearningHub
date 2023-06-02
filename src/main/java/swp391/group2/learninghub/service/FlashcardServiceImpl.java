@@ -103,4 +103,19 @@ public class FlashcardServiceImpl implements FlashcardService {
             throw new Exception("Feature Card not active");
         }
     }
+
+    @Override
+    public boolean setLearn(int id) throws Exception {
+        User user = (User)session.getAttribute("user");
+        FlashcardSet set = setDAO.findSetById(id,user.getEmail());
+        if(user.getEmail() == null){
+            throw new Exception("can not find users");
+        }
+        if(set == null){
+            throw new Exception("can not find set");
+        }
+        set.setLearned(!set.isLearned());
+        setDAO.save(set);
+        return(set.isLearned());
+    }
 }
