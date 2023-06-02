@@ -1,4 +1,4 @@
-package swp391.group2.learninghub.Model;
+package swp391.group2.learninghub.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChangePass {
-    private String oldpass;
-    private String verpass;
-    private String newpass;
+public class LoginRequest{
+        private String email;
+        private String password;
 }

@@ -1,9 +1,8 @@
-package swp391.group2.learninghub.Service;
+package swp391.group2.learninghub.service;
 
 
-import swp391.group2.learninghub.Model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import swp391.group2.learninghub.Model.sdi.ClientSdi;
+import swp391.group2.learninghub.model.User;
+import swp391.group2.learninghub.model.sdi.ClientSdi;
 
 import java.util.List;
 

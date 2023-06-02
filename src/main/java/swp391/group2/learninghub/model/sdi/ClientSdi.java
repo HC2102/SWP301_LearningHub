@@ -1,4 +1,4 @@
-package swp391.group2.learninghub.Model.sdi;
+package swp391.group2.learninghub.model.sdi;
 
 import lombok.*;
 

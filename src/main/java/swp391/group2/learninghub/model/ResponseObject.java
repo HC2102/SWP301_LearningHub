@@ -1,4 +1,4 @@
-package swp391.group2.learninghub.Model;
+package swp391.group2.learninghub.model;
 
 public class ResponseObject {
     private String status;

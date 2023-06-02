@@ -1,16 +1,16 @@
-package swp391.group2.learninghub.Service;
+package swp391.group2.learninghub.service;
 
 import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import swp391.group2.learninghub.DAO.FlashcardDAO;
-import swp391.group2.learninghub.DAO.FlashcardSetDAO;
-import swp391.group2.learninghub.Model.FlashcardSet;
+import swp391.group2.learninghub.dao.FlashcardDAO;
+import swp391.group2.learninghub.dao.FlashcardSetDAO;
+import swp391.group2.learninghub.model.FlashcardSet;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
-import swp391.group2.learninghub.Model.Flashcard;
-import swp391.group2.learninghub.Model.User;
+import swp391.group2.learninghub.model.Flashcard;
+import swp391.group2.learninghub.model.User;
 
 @Service
 public class FlashcardServiceImpl implements FlashcardService {
@@ -40,13 +40,30 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    public boolean deleteByCardById(int id) throws Exception {
+    public void deleteByCardById(int id) throws Exception {
         try{
             //find if this card is valid
             flashcardDAO.deleteById(id);
-            return true;
         }catch (Exception e){
             throw new Exception("cannot delete card, reason: "+e.getMessage());
+        }
+    }
+
+    @Override
+    public void archiveSetById(int id) throws Exception {
+        //get user information
+        User sessionUser = (User)session.getAttribute("user");
+        //find if that set is valid
+        FlashcardSet target = setDAO.findSetById(id,sessionUser.getEmail());
+        if(target == null){
+            throw new Exception("Set can not be found");
+        }else{
+            target.setActive(false);
+            try{
+                setDAO.save(target);
+            }catch(Exception e){
+                throw new Exception("Unable to update set information");
+            }
         }
     }
 

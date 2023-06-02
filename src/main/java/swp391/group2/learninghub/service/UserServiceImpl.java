@@ -1,24 +1,22 @@
-package swp391.group2.learninghub.Service;
+package swp391.group2.learninghub.service;
 
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import swp391.group2.learninghub.DAO.UserDAO;
-import swp391.group2.learninghub.Model.DataMailDTO;
-import swp391.group2.learninghub.Model.User;
-import swp391.group2.learninghub.Model.sdi.ClientSdi;
+import swp391.group2.learninghub.dao.UserDAO;
+import swp391.group2.learninghub.model.DataMailDTO;
+import swp391.group2.learninghub.model.User;
+import swp391.group2.learninghub.model.sdi.ClientSdi;
 import swp391.group2.learninghub.utils.Const;
 import swp391.group2.learninghub.utils.DataUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
-    public class UserServiceImpl implements UserService{
+    public class UserServiceImpl implements UserService {
+
     private final UserDAO userDAO;
     @Autowired
     private MailService mailService;
@@ -34,12 +32,12 @@ import java.util.Map;
         String passRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
         newUser.setActive(true);
         newUser.setRoleId("USER");
-        newUser.setSignup_date(Date.from(now.toInstant(ZoneOffset.UTC)));
+        newUser.setSignupDate(Date.from(now.toInstant(ZoneOffset.UTC)));
         //check if fields are valid
         if(userDAO.existsById(newUser.getEmail())){
             throw new Exception("email is already in use");
         }
-        if(!newUser.getEmail().matches(emailRegex)||!newUser.getPhone_num().matches(phoneRegex)){
+        if(!newUser.getEmail().matches(emailRegex)||!newUser.getPhoneNum().matches(phoneRegex)){
             throw new Exception("input field are not in right format");
         }
         if(!newUser.getPassword().trim().matches(passRegex)){
@@ -88,4 +86,6 @@ import java.util.Map;
     public void save(User newUser) {
         userDAO.save(newUser);
     }
+
+
 }

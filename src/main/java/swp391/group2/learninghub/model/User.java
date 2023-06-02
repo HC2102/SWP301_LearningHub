@@ -1,4 +1,4 @@
-package swp391.group2.learninghub.Model;
+package swp391.group2.learninghub.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
@@ -8,27 +8,29 @@ import java.util.Date;
 
 @Entity
 public class User {
+
     @Id
     private String email;
-    private String real_name;
-    private String phone_num;
+    private String realName;
+    private String phoneNum;
     private String password;
     private String roleId;
+
     private boolean isActive;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date signup_date;
+    private Date signupDate;
 
     public User() {
     }
 
-    public User(String email, String real_name, String phone_num, String password, String roleId, boolean isActive, Date signup_date) {
+    public User(String email, String realName, String phoneNum, String password, String roleId, boolean isActive, Date signupDate) {
         this.email = email;
-        this.real_name = real_name;
-        this.phone_num = phone_num;
+        this.realName = realName;
+        this.phoneNum = phoneNum;
         this.password = password;
         this.roleId = roleId;
         this.isActive = isActive;
-        this.signup_date = signup_date;
+        this.signupDate = signupDate;
     }
 
     public String getEmail() {
@@ -39,20 +41,20 @@ public class User {
         this.email = email;
     }
 
-    public String getReal_name() {
-        return real_name;
+    public String getRealName() {
+        return realName;
     }
 
-    public void setReal_name(String real_name) {
-        this.real_name = real_name;
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
-    public String getPhone_num() {
-        return phone_num;
+    public String getPhoneNum() {
+        return phoneNum;
     }
 
-    public void setPhone_num(String phone_num) {
-        this.phone_num = phone_num;
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
     }
 
     public String getPassword() {
@@ -79,25 +81,24 @@ public class User {
         isActive = active;
     }
 
-    public Date getSignup_date() {
-        return signup_date;
+    public Date getSignupDate() {
+        return signupDate;
     }
 
-    public void setSignup_date(Date signup_date) {
-        this.signup_date = signup_date;
+    public void setSignupDate(Date signupDate) {
+        this.signupDate = signupDate;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "email='" + email + '\'' +
-                ", real_name='" + real_name + '\'' +
-                ", phone_num='" + phone_num + '\'' +
+                ", realName='" + realName + '\'' +
+                ", phoneNum='" + phoneNum + '\'' +
                 ", password='" + password + '\'' +
                 ", roleId='" + roleId + '\'' +
                 ", isActive=" + isActive +
-                ", signup_date=" + signup_date +
+                ", signupDate=" + signupDate +
                 '}';
     }
-
 }

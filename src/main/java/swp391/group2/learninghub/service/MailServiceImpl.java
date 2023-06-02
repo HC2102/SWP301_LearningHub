@@ -1,4 +1,4 @@
-package swp391.group2.learninghub.Service;
+package swp391.group2.learninghub.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-import swp391.group2.learninghub.Model.DataMailDTO;
+import swp391.group2.learninghub.model.DataMailDTO;
 
 @Service
 @Slf4j

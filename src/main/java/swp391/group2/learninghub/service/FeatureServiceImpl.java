@@ -1,9 +1,9 @@
-package swp391.group2.learninghub.Service;
+package swp391.group2.learninghub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import swp391.group2.learninghub.DAO.FeatureDAO;
-import swp391.group2.learninghub.Model.Feature;
+import swp391.group2.learninghub.dao.FeatureDAO;
+import swp391.group2.learninghub.model.Feature;
 
 import java.util.List;
 import java.util.Optional;

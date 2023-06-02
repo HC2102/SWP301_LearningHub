@@ -1,16 +1,17 @@
-package swp391.group2.learninghub.Service;
+package swp391.group2.learninghub.service;
 
-import swp391.group2.learninghub.Model.Flashcard;
-import swp391.group2.learninghub.Model.FlashcardSet;
+import swp391.group2.learninghub.model.Flashcard;
+import swp391.group2.learninghub.model.FlashcardSet;
 
 import java.util.List;
 
 public interface FlashcardService {
-    public String test();
     public List<FlashcardSet> showUserFlashcardSetById(String email);
-    public boolean deleteByCardById(int id) throws Exception;
+    public void deleteByCardById(int id) throws Exception;
     FlashcardSet createFlashCardSet(FlashcardSet flashCardSet);
     public List<Flashcard> showFlashCard(int set_id) throws Exception;
     public List<Flashcard> showAllFlashCard();
     public Flashcard create(Flashcard newfc) throws Exception;
+
+    public void archiveSetById(int id)throws Exception;
 }
