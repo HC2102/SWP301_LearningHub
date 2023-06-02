@@ -35,7 +35,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         return "service connect success";
     }
     @Override
-    public List<FlashcardSet> showUserFlashcardSetById(String email) {
+    public List<FlashcardSet> showUserFlashcardSetByEmail(String email) {
         return setDAO.showUserFlashcardSetById(email);
     }
 
@@ -85,11 +85,6 @@ public class FlashcardServiceImpl implements FlashcardService {
         }
         newfc.setLearned(false);
         return flashcardDAO.save(newfc);
-    }
-
-    @Override
-    public List<Flashcard> showAllFlashCard() {
-        return flashcardDAO.findAll();
     }
 
     @Override

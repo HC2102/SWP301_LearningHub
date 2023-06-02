@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import swp391.group2.learninghub.model.ChangePass;
 import swp391.group2.learninghub.model.LoginRequest;
@@ -91,17 +93,17 @@ public class UserController {
     /*Create new user account based on json sent by client site*/
     @PostMapping("/login")
     ResponseEntity<ResponseObject> userLogin(@RequestBody LoginRequest loginRequest) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         List<User> u1=userService.findByEmail(loginRequest.getEmail().trim());
-        if(u1.get(0).getPassword().trim().equals(loginRequest.getPassword().trim())) {
+//        u1.get(0).getPassword().trim().equals(loginRequest.getPassword().trim())
+        if(passwordEncoder.matches(loginRequest.getPassword(),u1.get(0).getPassword().trim())) {
             session.setAttribute("user",u1.get(0));
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success", "Login Successful!", u1)
-            );
+                    new ResponseObject("success", "Login Successful!", u1));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("failed","Email or PassWord invalid!",
-                        "")
-        );
+                        ""));
     }
 
     /*Invalidate current session*/
@@ -144,14 +146,16 @@ public class UserController {
 
     @PutMapping("/password")
     String changePass(@RequestBody ChangePass changePass) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         User u=(User) session.getAttribute("user");
-        if(u.getPassword().trim().equals(changePass.getOldpass().trim())) {
+        if(passwordEncoder.matches(changePass.getOldpass(),u.getPassword())) {
             if(changePass.getNewpass().trim().equals("")||changePass.getVerpass().trim().equals("")){
                 return  "verification password and new password are not blank";
             }
             else if(changePass.getNewpass().trim().equals(changePass.getVerpass().trim())) {
                 User userUpdate=new User(u.getEmail(),u.getRealName(),u.getPhoneNum(),changePass.getNewpass(),u.getRoleId(),
                         u.isActive(),u.getSignupDate());
+                userUpdate.setPassword(changePass.getNewpass());
                 userService.save(userUpdate);
                 session.setAttribute("user",userUpdate);
                 return "change password successful!";

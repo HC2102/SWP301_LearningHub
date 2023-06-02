@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface UserDAO extends JpaRepository<User,String> {
     List<User> findByEmail(String name);
+
 }

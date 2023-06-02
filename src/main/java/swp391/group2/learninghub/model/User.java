@@ -3,6 +3,8 @@ package swp391.group2.learninghub.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
@@ -14,7 +16,6 @@ public class User {
     private String phoneNum;
     private String password;
     private String roleId;
-
     private boolean isActive;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date signupDate;
@@ -61,7 +62,9 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        /*encode password*/
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.password = passwordEncoder.encode(password);
     }
 
     public String getRoleId() {

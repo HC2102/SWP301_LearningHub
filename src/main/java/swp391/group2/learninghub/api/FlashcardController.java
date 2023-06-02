@@ -41,7 +41,8 @@ public class FlashcardController {
             /*Check to see if the feature is active*/
             isFeatureActive();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    "Success","retrieve flashcard set of "+userSession.getEmail(),flashcardService.showUserFlashcardSetById(userSession.getEmail())));
+                    "Success","retrieve flashcard set of "+
+                    userSession.getEmail(),flashcardService.showUserFlashcardSetByEmail(userSession.getEmail())));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     new ResponseObject("fail","account fail to connect: "+e.getMessage(),null)
@@ -53,9 +54,11 @@ public class FlashcardController {
     public ResponseEntity<ResponseObject> createFlashCardSet(@RequestBody FlashcardSet flashCardSet) {
         try {
             FlashcardSet createdSet = flashcardService.createFlashCardSet(flashCardSet);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","ok to create Flash Card Set",createdSet));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok",
+                    "ok to create Flash Card Set",createdSet));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail","Failed to create Flash Card Set: " + e.getMessage(),null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail",
+                    "Failed to create Flash Card Set: " + e.getMessage(),null));
         }
     }
 
@@ -75,8 +78,7 @@ public class FlashcardController {
 
     /*for flashcard card services*/
     @GetMapping("/card")
-    ResponseEntity<ResponseObject> showFlashCard( @RequestParam(name="id",required = false,defaultValue = "")
-                                                  int setId){
+    ResponseEntity<ResponseObject> showFlashCard( @RequestParam(name="id",required = false,defaultValue = "")int setId){
         try{
             List<Flashcard> fl=flashcardService.showFlashCard(setId);
             return ResponseEntity.status(HttpStatus.OK).body(
