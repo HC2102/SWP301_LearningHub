@@ -95,7 +95,6 @@ public class UserController {
     ResponseEntity<ResponseObject> userLogin(@RequestBody LoginRequest loginRequest) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         List<User> u1=userService.findByEmail(loginRequest.getEmail().trim());
-//        u1.get(0).getPassword().trim().equals(loginRequest.getPassword().trim())
         if(passwordEncoder.matches(loginRequest.getPassword(),u1.get(0).getPassword().trim())) {
             session.setAttribute("user",u1.get(0));
             return ResponseEntity.status(HttpStatus.OK).body(
@@ -170,7 +169,7 @@ public class UserController {
     public ResponseEntity<ResponseObject> forgetPassWord(
             @RequestParam(name="email",required = false,defaultValue = "") String email) {
         List<User> u=userService.findByEmail(email);
-        if(u.size()>0) {
+        if(!u.isEmpty()) {
             ClientSdi sdi=new ClientSdi(u.get(0).getRealName(),email,email);
             userService.create(sdi);
             return ResponseEntity.status(HttpStatus.OK).body(

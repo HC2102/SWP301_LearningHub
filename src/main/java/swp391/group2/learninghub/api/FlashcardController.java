@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/v1/flashcard")
 public class FlashcardController {
     /*Variable and constructor section*/
-    private final int FEATURE_ID = 1;  /*Feature code*/
+    private static final int FEATUREID = 1;  /*Feature code*/
     @Autowired
     HttpSession session;
     @Autowired
@@ -129,7 +129,7 @@ public class FlashcardController {
 
     /*Miscellaneous function*/
     private void isFeatureActive() throws Exception {
-        Feature feature = featureService.findFeatureById(FEATURE_ID);
+        Feature feature = featureService.findFeatureById(FEATUREID);
         if(!feature.isActive()){
             throw new Exception("Feature is disable: "+feature.getDescription());
         }

@@ -25,15 +25,21 @@ public class FeatureServiceImpl implements FeatureService{
 
     @Override
     public void setActive(int id,String mess) throws Exception {
-        Feature feature = featureDAO.findById(id).get();
-        feature.setDescription(mess);
-        System.out.println(feature.toString());
-        if(feature.getName() == null){
-            throw new Exception("item is null");
+        Optional<Feature> optionalFeature =featureDAO.findById(id);
+        if(optionalFeature.isPresent()){
+            Feature feature = optionalFeature.get();
+            feature.setDescription(mess);
+            System.err.println(feature.toString());
+            if(feature.getName() == null){
+                throw new Exception("item is null");
+            }else{
+                feature.setActive(!feature.isActive());
+                featureDAO.save(feature);
+            }
         }else{
-            feature.setActive(!feature.isActive());
-            featureDAO.save(feature);
+            throw new RuntimeException("feature not found");
         }
+
     }
 
     @Override

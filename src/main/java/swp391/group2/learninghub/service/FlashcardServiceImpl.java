@@ -88,12 +88,12 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    public List<Flashcard> showFlashCard(int set_id) throws Exception {
+    public List<Flashcard> showFlashCard(int setId) throws Exception {
         if (featureService.findFeatureById(1).isActive()) {
             //lây User từ session
             User user = (User) session.getAttribute("user");
 
-            List<Flashcard> list = flashcardDAO.findFlashCardWithCardSetsAndUser(user.getEmail(), set_id);
+            List<Flashcard> list = flashcardDAO.findFlashCardWithCardSetsAndUser(user.getEmail(), setId);
             if (list == null) {
                 throw new Exception("List null");
             }

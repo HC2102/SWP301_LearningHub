@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import swp391.group2.learninghub.model.ResponseObject;
 import swp391.group2.learninghub.model.User;
 import swp391.group2.learninghub.service.FeatureService;
+
 @RestController
 @RequestMapping("/api/v1/feature")
 public class FeatureController {
@@ -31,7 +32,7 @@ public class FeatureController {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",
                         "feature list", service.showAll()));
             } else {
-                throw new Exception("User information for session not found");
+                throw new RuntimeException("User information for session not found");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("Fail",
@@ -52,7 +53,7 @@ public class FeatureController {
                     throw new Exception("User unauthorized");
                 }
             } else {
-                throw new Exception("User information for session not found");
+                throw new RuntimeException("User information for session not found");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Fail",
