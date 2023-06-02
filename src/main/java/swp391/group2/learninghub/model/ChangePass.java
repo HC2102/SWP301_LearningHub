@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChangePass {
+    /*Model for change password function*/
     private String oldpass;
     private String verpass;
     private String newpass;

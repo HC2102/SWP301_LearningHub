@@ -59,10 +59,8 @@ import java.util.*;
     public Boolean create(ClientSdi sdi) {
         try {
             DataMailDTO dataMail = new DataMailDTO();
-
             dataMail.setTo(sdi.getEmail());
             dataMail.setSubject(Const.SEND_MAIL_SUBJECT.CLIENT_REGISTER);
-
             String pass= DataUtils.generateTempPwd(6);
             Map<String, Object> props = new HashMap<>();
             props.put("name", sdi.getName());
@@ -70,11 +68,9 @@ import java.util.*;
             props.put("password",pass);
             dataMail.setProps(props);
             mailService.sendHtmlMail(dataMail, Const.TEMPLATE_FILE_NAME.CLIENT_REGISTER);
-
             List<User> u=findByEmail(sdi.getUsername());
             u.get(0).setPassword(pass);
             save(u.get(0));
-
             return true;
         } catch (MessagingException exp){
             exp.printStackTrace();

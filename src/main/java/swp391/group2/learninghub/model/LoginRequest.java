@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+/*for login feature*/
 public class LoginRequest{
         private String email;
         private String password;

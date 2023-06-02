@@ -8,7 +8,6 @@ import java.util.Date;
 
 @Entity
 public class User {
-
     @Id
     private String email;
     private String realName;
