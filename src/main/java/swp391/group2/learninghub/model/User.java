@@ -33,6 +33,7 @@ public class User {
         this.signupDate = signupDate;
     }
 
+
     public String getEmail() {
         return email;
     }

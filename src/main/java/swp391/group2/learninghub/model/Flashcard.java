@@ -11,18 +11,16 @@ public class Flashcard {
     private String term;
     private String definition;
     private int position;
-    private boolean isLearned;
 
     public Flashcard() {
     }
 
-    public Flashcard(int id, int setId, String term, String definition, int position, boolean isLearned) {
+    public Flashcard(int id, int setId, String term, String definition, int position) {
         this.id = id;
         this.setId = setId;
         this.term = term;
         this.definition = definition;
         this.position = position;
-        this.isLearned = isLearned;
     }
 
     public int getId() {
@@ -65,13 +63,7 @@ public class Flashcard {
         this.position = position;
     }
 
-    public boolean isLearned() {
-        return isLearned;
-    }
 
-    public void setLearned(boolean learned) {
-        isLearned = learned;
-    }
 
     @Override
     public String toString() {
@@ -81,7 +73,6 @@ public class Flashcard {
                 ", term='" + term + '\'' +
                 ", definition='" + definition + '\'' +
                 ", position=" + position +
-                ", isLearn=" + isLearned +
                 '}';
     }
 

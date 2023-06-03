@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public interface FlashcardDAO extends JpaRepository<Flashcard,Integer> {
-    @Query(value = "SELECT * FROM flashcard fl WHERE fl.set_id = :set_id AND " +
+    @Query(value = "SELECT * FROM flashcard fl WHERE fl.set_id = :setId AND " +
             "fl.set_id IN (SELECT id FROM flashcard_set f WHERE f.user_id = :userId)", nativeQuery = true)
-    List<Flashcard> findFlashCardWithCardSetsAndUser(@Param("userId") String userId, @Param("set_id") int setId);
+    List<Flashcard> findFlashCardWithCardSetsAndUser(@Param("userId") String userId, @Param("setId") int setId);
 }

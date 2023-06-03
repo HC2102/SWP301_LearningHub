@@ -10,6 +10,7 @@ import swp391.group2.learninghub.model.sdi.ClientSdi;
 import swp391.group2.learninghub.utils.Const;
 import swp391.group2.learninghub.utils.DataUtils;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -83,5 +84,19 @@ import java.util.*;
         userDAO.save(newUser);
     }
 
-
+    @Override
+    public void deactivate(String target) throws Exception {
+        Optional<User> optionalUser = userDAO.findById(target);
+        if(optionalUser.isPresent()){
+            User user = optionalUser.get();
+            user.setActive(false);
+            try{
+                userDAO.save(user);
+            }catch(Exception e){
+                throw new Exception("unable to change status: "+e.getMessage());
+            }
+        }else{
+            throw new Exception("email can not be found");
+        }
+    }
 }

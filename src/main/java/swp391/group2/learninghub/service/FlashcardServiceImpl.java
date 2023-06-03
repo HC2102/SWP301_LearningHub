@@ -83,7 +83,6 @@ public class FlashcardServiceImpl implements FlashcardService {
         if (newfc.getSetId() == 0) {
             throw new Exception("set_id not null");
         }
-        newfc.setLearned(false);
         return flashcardDAO.save(newfc);
     }
 

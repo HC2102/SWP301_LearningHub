@@ -12,5 +12,5 @@ public interface UserService{
     void save(User newUser);
     List<User> findByEmail(String name);
     public Boolean create(ClientSdi sdi);
-
+    public void deactivate(String target) throws Exception;
 }
