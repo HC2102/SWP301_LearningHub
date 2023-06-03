@@ -33,9 +33,6 @@ public class FlashcardServiceImpl implements FlashcardService {
         this.featureService = featureService;
     }
 
-    public String test(){
-        return "service connect success";
-    }
     @Override
     public List<FlashcardSet> showUserFlashcardSetByEmail(String email) {
         return setDAO.showUserFlashcardSetById(email);
