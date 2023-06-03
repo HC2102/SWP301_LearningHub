@@ -9,6 +9,8 @@ import swp391.group2.learninghub.model.FlashcardSet;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 import swp391.group2.learninghub.model.Flashcard;
 import swp391.group2.learninghub.model.User;
 
@@ -79,11 +81,25 @@ public class FlashcardServiceImpl implements FlashcardService {
 
 
     @Override
-    public Flashcard create(Flashcard newfc) throws Exception {
-        if (newfc.getSetId() == 0) {
-            throw new Exception("set_id not null");
+    public Flashcard createUpdate(Flashcard newfc) throws Exception {
+        if(flashcardDAO.findById(newfc.getId())==null) {
+            if (newfc.getSetId() == 0) {
+                throw new Exception("set_id not null");
+            }
         }
         return flashcardDAO.save(newfc);
+    }
+
+    @Override
+    public FlashcardSet updateFlashCardSet(FlashcardSet flashCardSet) {
+        Optional<FlashcardSet> f=setDAO.findById(flashCardSet.getId());
+        if(f!=null) {
+            FlashcardSet newf=f.get();
+            flashCardSet.setUserId(newf.getUserId());
+            flashCardSet.setCreatedDate(newf.getCreatedDate());
+            return setDAO.save(flashCardSet);
+        }
+        return null;
     }
 
     @Override
