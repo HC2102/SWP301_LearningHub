@@ -10,7 +10,9 @@ public interface FlashcardService {
     public List<FlashcardSet> showUserFlashcardSetById(String email);
     public boolean deleteByCardById(int id) throws Exception;
     FlashcardSet createFlashCardSet(FlashcardSet flashCardSet);
+
+    FlashcardSet updateFlashCardSet(FlashcardSet flashCardSet);
     public List<Flashcard> showFlashCard(int set_id) throws Exception;
     public List<Flashcard> showAllFlashCard();
-    public Flashcard create(Flashcard newfc) throws Exception;
+    public Flashcard createUpdate(Flashcard newfc) throws Exception;
 }

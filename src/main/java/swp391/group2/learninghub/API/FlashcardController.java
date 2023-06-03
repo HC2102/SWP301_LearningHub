@@ -71,13 +71,24 @@ public class FlashcardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail","Failed to create Flash Card Set: " + e.getMessage(),null));
         }
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<ResponseObject> updateFlashCardSet(@RequestBody FlashcardSet flashCardSet) {
+        try {
+            FlashcardSet updatedSet = flashcardService.updateFlashCardSet(flashCardSet);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","ok to update Flash Card Set",updatedSet));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail","Failed to update Flash Card Set: " + e.getMessage(),null));
+        }
+    }
     @PostMapping("/create")
     ResponseEntity<ResponseObject> flashCardCreate(@RequestBody Flashcard flashcard){
         try{
 
-            flashcardService.create(flashcard);
+            flashcardService.createUpdate(flashcard);
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success","Create FlashCard successfull",flashcard)
+                    new ResponseObject("success","Create or Update FlashCard successfull",flashcard)
             );
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
@@ -85,6 +96,8 @@ public class FlashcardController {
             );
         }
     }
+
+
     @GetMapping("/show")
     ResponseEntity<ResponseObject> showFlashCard( @RequestParam(name="set_id",required = false,defaultValue = "")
                                                   int set_id){
