@@ -121,7 +121,7 @@ public class UserController {
                 PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 List<User> u1 = userService.findByEmail(loginRequest.getEmail().trim());
                 if(u1.isEmpty()){
-                    throw new Exception("can find email");
+                    throw new Exception("can not find email");
                 }
                 if (passwordEncoder.matches(loginRequest.getPassword(), u1.get(0).getPassword().trim())) {
                     session.setAttribute("user", u1.get(0));
