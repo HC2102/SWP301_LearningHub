@@ -94,7 +94,7 @@ public class UserController {
                         new ResponseObject("success", "update user profile successfully", updatedUser));
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                        new ResponseObject("fail", "can not update user profile", e.getMessage()));
+                            new ResponseObject("fail", "can not update user profile", e.getMessage()));
             }
         }
         /*only admin can use this api to show User list*/
