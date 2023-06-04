@@ -8,7 +8,7 @@ import swp391.group2.learninghub.model.FlashcardSet;
 
 import java.util.List;
 @Repository
-public interface FlashcardSetDAO extends JpaRepository<FlashcardSet,Integer> {
+public interface    FlashcardSetDAO extends JpaRepository<FlashcardSet,Integer> {
     @Query("select s from FlashcardSet s where s.userId= :email AND s.isActive= true")
     public List<FlashcardSet> showUserFlashcardSetById(@Param("email")String email);
 

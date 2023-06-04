@@ -117,16 +117,23 @@ public class UserController {
         /*Create new user account based on json sent by client site*/
         @PostMapping("/login")
         ResponseEntity<ResponseObject> userLogin (@RequestBody LoginRequest loginRequest){
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            List<User> u1 = userService.findByEmail(loginRequest.getEmail().trim());
-            if (passwordEncoder.matches(loginRequest.getPassword(), u1.get(0).getPassword().trim())) {
-                session.setAttribute("user", u1.get(0));
-                return ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject("success", "Login Successful!", u1));
+            try{
+                PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                List<User> u1 = userService.findByEmail(loginRequest.getEmail().trim());
+                if(u1.isEmpty()){
+                    throw new Exception("can find email");
+                }
+                if (passwordEncoder.matches(loginRequest.getPassword(), u1.get(0).getPassword().trim())) {
+                    session.setAttribute("user", u1.get(0));
+                    return ResponseEntity.status(HttpStatus.OK).body(
+                            new ResponseObject("success", "Login Successful!", u1));
+                }
+                throw new Exception("login failed");
+            }catch (Exception e){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        new ResponseObject("failed", "Email or PassWord invalid!",
+                                e.getMessage()));
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("failed", "Email or PassWord invalid!",
-                            ""));
         }
 
         /*Invalidate current session*/
