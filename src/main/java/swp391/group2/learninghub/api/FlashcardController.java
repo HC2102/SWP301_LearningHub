@@ -12,7 +12,7 @@ import swp391.group2.learninghub.service.FlashcardService;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:3000")
+//@CrossOrigin(origins = "http://127.0.0.1:3000")
 @RequestMapping("/api/v1/flashcard")
 public class FlashcardController {
     /*Variable and constructor section*/
