@@ -10,6 +10,7 @@ import swp391.group2.learninghub.model.User;
 import swp391.group2.learninghub.service.FeatureService;
 
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:3000")
 @RequestMapping("/api/v1/feature")
 public class FeatureController {
     //variable and constructor section

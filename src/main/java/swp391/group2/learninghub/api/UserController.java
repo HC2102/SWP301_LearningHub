@@ -17,6 +17,7 @@ import swp391.group2.learninghub.service.UserService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:3000")
 @RequestMapping("/api/v1/user")
 public class UserController {
     @Autowired
