@@ -90,11 +90,11 @@ import java.util.*;
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             user.setActive(false);
-            try{
+//            try{
                 userDAO.save(user);
-            }catch(Exception e){
-                throw new Exception("unable to change status: "+e.getMessage());
-            }
+//            }catch(Exception e){
+//                throw new Exception("unable to change status: "+e.getMessage());
+//            }
         }else{
             throw new Exception("email can not be found");
         }

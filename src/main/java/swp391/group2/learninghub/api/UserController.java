@@ -102,7 +102,7 @@ public class UserController {
         public ResponseEntity<ResponseObject> showAll () {
             try {
                 User sessionUser = (User) session.getAttribute("user"); /*Session user*/
-                if (sessionUser.getRoleId().compareToIgnoreCase("ADMIN") != 0) {
+                if (sessionUser.getRoleId().equals("ADMIN")) {
                     throw new Exception("Action unauthorized");
                 }
                 return ResponseEntity.status(HttpStatus.OK).body(

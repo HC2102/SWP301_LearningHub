@@ -130,4 +130,6 @@ public class FlashcardServiceImpl implements FlashcardService {
         setDAO.save(set);
         return(set.isLearned());
     }
+    public void Learn(){
+    }
 }
