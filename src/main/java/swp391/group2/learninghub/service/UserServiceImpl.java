@@ -10,17 +10,17 @@ import swp391.group2.learninghub.model.sdi.ClientSdi;
 import swp391.group2.learninghub.utils.Const;
 import swp391.group2.learninghub.utils.DataUtils;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
 @Service
-    public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
     @Autowired
     private MailService mailService;
+
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
@@ -34,18 +34,19 @@ import java.util.*;
         newUser.setActive(true);
         newUser.setRoleId("USER");
         newUser.setSignupDate(Date.from(now.toInstant(ZoneOffset.UTC)));
-        //check if fields are valid
-        if(userDAO.existsById(newUser.getEmail())){
+        // check if fields are valid
+        if (userDAO.existsById(newUser.getEmail())) {
             throw new Exception("email is already in use");
         }
-        if(!newUser.getEmail().matches(emailRegex)||!newUser.getPhoneNum().matches(phoneRegex)){
+        if (!newUser.getEmail().matches(emailRegex) || !newUser.getPhoneNum().matches(phoneRegex)) {
             throw new Exception("input field are not in right format");
         }
-        if(!newUser.getPassword().trim().matches(passRegex)){
+        if (!newUser.getPassword().trim().matches(passRegex)) {
             throw new Exception("password is not in right format");
         }
         return userDAO.save(newUser);
     }
+
     @Override
     public List<User> showUsers() {
         return userDAO.findAll();
@@ -62,18 +63,18 @@ import java.util.*;
             DataMailDTO dataMail = new DataMailDTO();
             dataMail.setTo(sdi.getEmail());
             dataMail.setSubject(Const.SEND_MAIL_SUBJECT.CLIENT_REGISTER);
-            String pass= DataUtils.generateTempPwd(6);
+            String pass = DataUtils.generateTempPwd(6);
             Map<String, Object> props = new HashMap<>();
             props.put("name", sdi.getName());
             props.put("username", sdi.getUsername());
-            props.put("password",pass);
+            props.put("password", pass);
             dataMail.setProps(props);
             mailService.sendHtmlMail(dataMail, Const.TEMPLATE_FILE_NAME.CLIENT_REGISTER);
-            List<User> u=findByEmail(sdi.getUsername());
+            List<User> u = findByEmail(sdi.getUsername());
             u.get(0).setPassword(pass);
             save(u.get(0));
             return true;
-        } catch (MessagingException exp){
+        } catch (MessagingException exp) {
             exp.printStackTrace();
         }
         return false;
@@ -87,15 +88,15 @@ import java.util.*;
     @Override
     public void deactivate(String target) throws Exception {
         Optional<User> optionalUser = userDAO.findById(target);
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setActive(false);
-//            try{
-                userDAO.save(user);
-//            }catch(Exception e){
-//                throw new Exception("unable to change status: "+e.getMessage());
-//            }
-        }else{
+            // try{
+            userDAO.save(user);
+            // }catch(Exception e){
+            // throw new Exception("unable to change status: "+e.getMessage());
+            // }
+        } else {
             throw new Exception("email can not be found");
         }
     }

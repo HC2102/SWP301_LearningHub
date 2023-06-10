@@ -11,16 +11,17 @@ import java.util.List;
 public class SecurityConfig implements SecurityFilterChain {
     @Override
     public boolean matches(HttpServletRequest request) {
-        return true; //allow all request
+        return true; // allow all request
     }
 
     @Override
     public List<Filter> getFilters() {
         return Collections.emptyList();
     }
-    public SecurityFilterChain  apply(HttpSecurity http) throws Exception {
+
+    public SecurityFilterChain apply(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 .anyRequest().permitAll() // Allow unauthenticated access to all endpoints
                 .and()
                 .csrf().disable(); // Disable CSRF protection
