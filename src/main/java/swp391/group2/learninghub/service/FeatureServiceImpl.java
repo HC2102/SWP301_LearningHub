@@ -48,11 +48,6 @@ public class FeatureServiceImpl implements FeatureService{
     @Override
     public Feature findFeatureById(int id) {
         Optional<Feature> optionalFeature = featureDAO.findById(id);
-        if (optionalFeature.isPresent()) {
-            Feature feature = optionalFeature.get();
-            return feature;
-        } else {
-            return null;
-        }
+        return optionalFeature.orElse(null);
     }
 }
