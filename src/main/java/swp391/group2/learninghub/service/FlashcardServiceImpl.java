@@ -79,10 +79,9 @@ public class FlashcardServiceImpl implements FlashcardService {
 
     @Override
     public Flashcard createUpdate(Flashcard newfc) throws Exception {
-        if(flashcardDAO.findById(newfc.getId())==null) {
-            if (newfc.getSetId() == 0) {
+        Optional<Flashcard> flashcard = flashcardDAO.findById(newfc.getId());
+        if(flashcard.isPresent() && newfc.getSetId() == 0 ) {
                 throw new Exception("set_id not null");
-            }
         }
         return flashcardDAO.save(newfc);
     }
