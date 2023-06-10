@@ -30,7 +30,7 @@ import java.util.*;
         LocalDateTime now = LocalDateTime.now();
         String emailRegex = "^(.+)@(\\S+)$";
         String phoneRegex = "^\\d{10}$";
-        String passRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+        String passRegex = "^(?=.*[\\d])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
         newUser.setActive(true);
         newUser.setRoleId("USER");
         newUser.setSignupDate(Date.from(now.toInstant(ZoneOffset.UTC)));
