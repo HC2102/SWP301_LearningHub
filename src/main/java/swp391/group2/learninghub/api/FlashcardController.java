@@ -17,6 +17,8 @@ import java.util.List;
 public class FlashcardController {
     /*Variable and constructor section*/
     private static final int FEATURE_ID = 1;  /*Feature code*/
+    private static final String SUCCESSMSG = "Success";
+    private static final String FAILMSG = "Fail";
     @Autowired
     HttpSession session;
     @Autowired
@@ -27,7 +29,7 @@ public class FlashcardController {
     /*testing the connection*/
     @GetMapping("/test")
     public String test(){
-        return "success";
+        return SUCCESSMSG;
     }
     /*for flashcard set services*/
     @GetMapping("/set")
@@ -42,11 +44,11 @@ public class FlashcardController {
             /*Check to see if the feature is active*/
             isFeatureActive();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    "Success","retrieve flashcard set of "+
+                    SUCCESSMSG,"retrieve flashcard set of "+
                     userSession.getEmail(),flashcardService.showUserFlashcardSetByEmail(userSession.getEmail())));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject("fail","account fail to connect: "+e.getMessage(),null)
+                    new ResponseObject(FAILMSG,"account fail to connect: "+e.getMessage(),null)
             );
         }
     }
@@ -55,10 +57,10 @@ public class FlashcardController {
     public ResponseEntity<ResponseObject> createFlashCardSet(@RequestBody FlashcardSet flashCardSet) {
         try {
             FlashcardSet createdSet = flashcardService.createFlashCardSet(flashCardSet);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok",
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG,
                     "ok to create Flash Card Set",createdSet));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail",
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject(FAILMSG,
                     "Failed to create Flash Card Set: " + e.getMessage(),null));
         }
     }
@@ -67,10 +69,10 @@ public class FlashcardController {
     public ResponseEntity<ResponseObject> updateFlashCardSet(@RequestBody FlashcardSet flashCardSet) {
         try {
             FlashcardSet updatedSet = flashcardService.updateFlashCardSet(flashCardSet);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("ok","ok to update Flash Card Set",updatedSet));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG,"ok to update Flash Card Set",updatedSet));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("fail","Failed to update Flash Card Set: " + e.getMessage(),null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject(FAILMSG,"Failed to update Flash Card Set: " + e.getMessage(),null));
         }
     }
 
@@ -79,11 +81,11 @@ public class FlashcardController {
         try{
             flashcardService.archiveSetById(setId);
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success","archive set successfull",null)
+                    new ResponseObject(SUCCESSMSG,"archive set successfull",null)
             );
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("Error","Can not archive set",e.getMessage())
+                    new ResponseObject(FAILMSG,"Can not archive set",e.getMessage())
             );
         }
     }
@@ -91,11 +93,11 @@ public class FlashcardController {
     ResponseEntity<ResponseObject> setLearned(@RequestParam("id") int setId){
         try{
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success","change status successfully",
+                    new ResponseObject(SUCCESSMSG,"change status successfully",
                             flashcardService.setLearn(setId)));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-              new ResponseObject("Error","can not set the status to set", e.getMessage()));
+              new ResponseObject(FAILMSG,"can not set the status to set", e.getMessage()));
         }
     }
 
@@ -105,11 +107,11 @@ public class FlashcardController {
         try{
             List<Flashcard> fl=flashcardService.showFlashCard(setId);
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success","Show FlashCard successfull",fl)
+                    new ResponseObject(SUCCESSMSG,"Show FlashCard successfull",fl)
             );
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject("fail","Show fail, reason: "+e.getMessage(),null)
+                    new ResponseObject(FAILMSG,"Show fail, reason: "+e.getMessage(),null)
             );
         }
     }
@@ -118,11 +120,11 @@ public class FlashcardController {
         try{
             flashcardService.createUpdate(flashcard);
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success","Create or Update FlashCard successfull",flashcard)
+                    new ResponseObject(SUCCESSMSG,"Create or Update FlashCard successfull",flashcard)
             );
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject("fail","Create or Update fail, reason: "+e.getMessage(),null)
+                    new ResponseObject(FAILMSG,"Create or Update fail, reason: "+e.getMessage(),null)
             );
         }
     }
@@ -131,10 +133,10 @@ public class FlashcardController {
         try{
             flashcardService.deleteByCardById(id);
             return ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject("success", "deleted card: " + id, null));
+                        new ResponseObject(SUCCESSMSG, "deleted card: " + id, null));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
-                    new ResponseObject("fail","cannot deleted card: "+id+" reason: "+e.getMessage(),null)
+                    new ResponseObject(FAILMSG,"cannot deleted card: "+id+" reason: "+e.getMessage(),null)
             );
         }
     }
