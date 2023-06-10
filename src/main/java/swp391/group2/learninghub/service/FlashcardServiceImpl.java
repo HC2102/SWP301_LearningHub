@@ -26,7 +26,8 @@ public class FlashcardServiceImpl implements FlashcardService {
     private FeatureService featureService;
 
     @Autowired
-    public FlashcardServiceImpl(FlashcardDAO flashcardDAO, FlashcardSetDAO setDAO, HttpSession session, FeatureService featureService) {
+    public FlashcardServiceImpl(FlashcardDAO flashcardDAO, FlashcardSetDAO setDAO, HttpSession session,
+            FeatureService featureService) {
         this.flashcardDAO = flashcardDAO;
         this.setDAO = setDAO;
         this.session = session;
@@ -40,27 +41,27 @@ public class FlashcardServiceImpl implements FlashcardService {
 
     @Override
     public void deleteByCardById(int id) throws Exception {
-        try{
-            //find if this card is valid
+        try {
+            // find if this card is valid
             flashcardDAO.deleteById(id);
-        }catch (Exception e){
-            throw new Exception("cannot delete card, reason: "+e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("cannot delete card, reason: " + e.getMessage());
         }
     }
 
     @Override
     public void archiveSetById(int id) throws Exception {
-        //get user information
-        User sessionUser = (User)session.getAttribute("user");
-        //find if that set is valid
-        FlashcardSet target = setDAO.findSetById(id,sessionUser.getEmail());
-        if(target == null){
+        // get user information
+        User sessionUser = (User) session.getAttribute("user");
+        // find if that set is valid
+        FlashcardSet target = setDAO.findSetById(id, sessionUser.getEmail());
+        if (target == null) {
             throw new Exception("Set can not be found");
-        }else{
+        } else {
             target.setActive(false);
-            try{
+            try {
                 setDAO.save(target);
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw new Exception("Unable to update set information");
             }
         }
@@ -76,21 +77,20 @@ public class FlashcardServiceImpl implements FlashcardService {
         return setDAO.save(flashCardSet);
     }
 
-
     @Override
     public Flashcard createUpdate(Flashcard newfc) throws Exception {
         Optional<Flashcard> flashcard = flashcardDAO.findById(newfc.getId());
-        if(flashcard.isPresent() && newfc.getSetId() == 0 ) {
-                throw new Exception("set_id not null");
+        if (flashcard.isPresent() && newfc.getSetId() == 0) {
+            throw new Exception("set_id not null");
         }
         return flashcardDAO.save(newfc);
     }
 
     @Override
     public FlashcardSet updateFlashCardSet(FlashcardSet flashCardSet) {
-        Optional<FlashcardSet> f=setDAO.findById(flashCardSet.getId());
-        if(f!=null) {
-            FlashcardSet newf=f.get();
+        if (flashCardSet.getId() != 0) {
+            Optional<FlashcardSet> f = setDAO.findById(flashCardSet.getId());
+            FlashcardSet newf = f.get();
             flashCardSet.setUserId(newf.getUserId());
             flashCardSet.setCreatedDate(newf.getCreatedDate());
             return setDAO.save(flashCardSet);
@@ -101,7 +101,7 @@ public class FlashcardServiceImpl implements FlashcardService {
     @Override
     public List<Flashcard> showFlashCard(int setId) throws Exception {
         if (featureService.findFeatureById(1).isActive()) {
-            //lây User từ session
+            // lây User từ session
             User user = (User) session.getAttribute("user");
 
             List<Flashcard> list = flashcardDAO.findFlashCardWithCardSetsAndUser(user.getEmail(), setId);
@@ -117,18 +117,19 @@ public class FlashcardServiceImpl implements FlashcardService {
 
     @Override
     public boolean setLearn(int id) throws Exception {
-        User user = (User)session.getAttribute("user");
-        FlashcardSet set = setDAO.findSetById(id,user.getEmail());
-        if(user.getEmail() == null){
+        User user = (User) session.getAttribute("user");
+        FlashcardSet set = setDAO.findSetById(id, user.getEmail());
+        if (user.getEmail() == null) {
             throw new Exception("can not find users");
         }
-        if(set == null){
+        if (set == null) {
             throw new Exception("can not find set");
         }
         set.setLearned(!set.isLearned());
         setDAO.save(set);
-        return(set.isLearned());
+        return (set.isLearned());
     }
-    public void Learn(){
+
+    public void Learn() {
     }
 }
