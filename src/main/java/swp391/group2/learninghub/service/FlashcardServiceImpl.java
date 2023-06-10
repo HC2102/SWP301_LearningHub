@@ -3,6 +3,8 @@ package swp391.group2.learninghub.service;
 import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+
 import swp391.group2.learninghub.dao.FlashcardDAO;
 import swp391.group2.learninghub.dao.FlashcardSetDAO;
 import swp391.group2.learninghub.model.FlashcardSet;
@@ -90,6 +92,9 @@ public class FlashcardServiceImpl implements FlashcardService {
     public FlashcardSet updateFlashCardSet(FlashcardSet flashCardSet) {
         if (flashCardSet.getId() != 0) {
             Optional<FlashcardSet> f = setDAO.findById(flashCardSet.getId());
+            if (f.isEmpty()) {
+                return null;
+            }
             FlashcardSet newf = f.get();
             flashCardSet.setUserId(newf.getUserId());
             flashCardSet.setCreatedDate(newf.getCreatedDate());
