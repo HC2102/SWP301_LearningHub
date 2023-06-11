@@ -14,27 +14,8 @@ public class Feature {
     public Feature() {
     }
 
-    public Feature(int id, String name, boolean isActive, String description) {
-        this.id = id;
-        this.name = name;
-        this.isActive = isActive;
-        this.description = description;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public boolean isActive() {

@@ -135,6 +135,4 @@ public class FlashcardServiceImpl implements FlashcardService {
         return (set.isLearned());
     }
 
-    public void Learn() {
-    }
 }
