@@ -13,10 +13,18 @@ public class DataUtils {
         for (int i = 0; i < length; i++) {
             otp[i] = numbers.charAt(r.nextInt(numbers.length()));
         }
+<<<<<<< HEAD
         String optCode = "";
         for (int i = 0; i < otp.length; i++) {
             optCode += otp[i];
+=======
+
+        StringBuilder bld = new StringBuilder();
+        for(int i=0;i<otp.length;i++) {
+            bld.append(otp[i]);
+>>>>>>> 1975433c3d68924146ea4036ee8b226f28846628
         }
+        String optCode = bld.toString();
         return optCode;
     }
 }
