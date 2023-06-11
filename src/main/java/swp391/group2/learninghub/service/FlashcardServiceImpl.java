@@ -136,5 +136,6 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     public void Learn() {
+        throw new UnsupportedOperationException();
     }
 }
