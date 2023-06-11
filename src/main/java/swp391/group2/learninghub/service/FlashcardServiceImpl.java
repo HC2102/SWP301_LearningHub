@@ -135,10 +135,4 @@ public class FlashcardServiceImpl implements FlashcardService {
         return (set.isLearned());
     }
 
-<<<<<<< HEAD
-=======
-    public void Learn() {
-        throw new UnsupportedOperationException();
-    }
->>>>>>> 1975433c3d68924146ea4036ee8b226f28846628
 }
