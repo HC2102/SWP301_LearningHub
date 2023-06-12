@@ -22,24 +22,10 @@ public class FlashcardSet {
     public FlashcardSet() {
     }
 
-    public FlashcardSet(int id, String userId, String title, String description, Date createdDate, boolean isActive, boolean isLearned) {
-        this.id = id;
-        this.userId = userId;
-        this.title = title;
-        this.description = description;
-        this.createdDate = createdDate;
-        this.isActive = isActive;
-        this.isLearned = isLearned;
-    }
-
     // Getters and setters
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUserId() {
@@ -50,32 +36,12 @@ public class FlashcardSet {
         this.userId = userId;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Date getCreatedDate() {
         return createdDate;
     }
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public boolean isActive() {
-        return isActive;
     }
 
     public void setActive(boolean active) {
