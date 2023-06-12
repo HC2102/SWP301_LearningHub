@@ -11,10 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@CrossOrigin(origins = "http://127.0.0.1:3000")
+// @CrossOrigin(origins = "http://127.0.0.1:3000")
 @RequestMapping("/api/v1/feature")
 public class FeatureController {
-    //variable and constructor section
+    // variable and constructor section
     @Autowired
     HttpSession session;
     @Autowired
@@ -25,7 +25,7 @@ public class FeatureController {
         this.service = service;
     }
 
-    //api section
+    // api section
     @GetMapping("")
     public ResponseEntity<ResponseObject> showAll() {
         try {
@@ -34,14 +34,15 @@ public class FeatureController {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",
                         "feature list", service.showAll()));
             } else {
-                throw new RuntimeException("User information for session not found");
+                throw new IllegalArgumentException("User information for session not found");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("Fail",
                     "Can not retrieve feature information", e.getMessage()));
         }
     }
-    //this api will allow admin to activate or deactivate feature of the app
+
+    // this api will allow admin to activate or deactivate feature of the app
     @PutMapping("/active")
     ResponseEntity<ResponseObject> setActive(@RequestParam("id") int featureId, @RequestParam("mess") String message) {
         try {
@@ -52,10 +53,10 @@ public class FeatureController {
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",
                             "Active status changed successfully feature id: " + featureId, message));
                 } else {
-                    throw new Exception("User unauthorized");
+                    throw new IllegalArgumentException("User unauthorized");
                 }
             } else {
-                throw new RuntimeException("User information for session not found");
+                throw new IllegalArgumentException("User information for session not found");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Fail",

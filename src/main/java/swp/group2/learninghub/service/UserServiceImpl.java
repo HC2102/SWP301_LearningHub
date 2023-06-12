@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User newUser) throws Exception {
+    public User register(User newUser) {
         LocalDateTime now = LocalDateTime.now();
         String emailRegex = "^(.+)@(\\S+)$";
         String phoneRegex = "^\\d{10}$";
@@ -37,13 +37,13 @@ public class UserServiceImpl implements UserService {
         newUser.setSignupDate(Date.from(now.toInstant(ZoneOffset.UTC)));
         // check if fields are valid
         if (userDAO.existsById(newUser.getEmail())) {
-            throw new Exception("email is already in use");
+            throw new IllegalArgumentException("email is already in use");
         }
         if (!newUser.getEmail().matches(emailRegex) || !newUser.getPhoneNum().matches(phoneRegex)) {
-            throw new Exception("input field are not in right format");
+            throw new IllegalArgumentException("input field are not in right format");
         }
         if (!newUser.getPassword().trim().matches(passRegex)) {
-            throw new Exception("password is not in right format");
+            throw new IllegalArgumentException("password is not in right format");
         }
         return userDAO.save(newUser);
     }
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deactivate(String target) throws Exception {
+    public void deactivate(String target) {
         Optional<User> optionalUser = userDAO.findById(target);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
              throw new Exception("unable to change status: "+e.getMessage());
              }
         } else {
-            throw new Exception("email can not be found");
+            throw new IllegalArgumentException("email can not be found");
         }
     }
 }

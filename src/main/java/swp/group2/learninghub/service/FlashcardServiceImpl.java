@@ -41,29 +41,29 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    public void deleteByCardById(int id) throws Exception {
+    public void deleteByCardById(int id) {
         try {
             // find if this card is valid
             flashcardDAO.deleteById(id);
         } catch (Exception e) {
-            throw new Exception("cannot delete card, reason: " + e.getMessage());
+            throw new IllegalArgumentException("cannot delete card, reason: " + e.getMessage());
         }
     }
 
     @Override
-    public void archiveSetById(int id) throws Exception {
+    public void archiveSetById(int id) {
         // get user information
         User sessionUser = (User) session.getAttribute("user");
         // find if that set is valid
         FlashcardSet target = setDAO.findSetById(id, sessionUser.getEmail());
         if (target == null) {
-            throw new Exception("Set can not be found");
+            throw new IllegalArgumentException("Set can not be found");
         } else {
             target.setActive(false);
             try {
                 setDAO.save(target);
             } catch (Exception e) {
-                throw new Exception("Unable to update set information");
+                throw new IllegalArgumentException("Unable to update set information");
             }
         }
     }
@@ -79,10 +79,10 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    public Flashcard createUpdate(Flashcard newfc) throws Exception {
+    public Flashcard createUpdate(Flashcard newfc) {
         Optional<Flashcard> flashcard = flashcardDAO.findById(newfc.getId());
         if (flashcard.isPresent() && newfc.getSetId() == 0) {
-            throw new Exception("set_id not null");
+            throw new IllegalArgumentException("set_id not null");
         }
         return flashcardDAO.save(newfc);
     }
@@ -103,31 +103,31 @@ public class FlashcardServiceImpl implements FlashcardService {
     }
 
     @Override
-    public List<Flashcard> showFlashCard(int setId) throws Exception {
+    public List<Flashcard> showFlashCard(int setId) {
         if (featureService.findFeatureById(1).isActive()) {
             // lây User từ session
             User user = (User) session.getAttribute("user");
 
             List<Flashcard> list = flashcardDAO.findFlashCardWithCardSetsAndUser(user.getEmail(), setId);
             if (list == null) {
-                throw new Exception("List null");
+                throw new IllegalArgumentException("List null");
             }
             return list;
 
         } else {
-            throw new Exception("Feature Card not active");
+            throw new IllegalArgumentException("Feature Card not active");
         }
     }
 
     @Override
-    public boolean setLearn(int id) throws Exception {
+    public boolean setLearn(int id) {
         User user = (User) session.getAttribute("user");
         FlashcardSet set = setDAO.findSetById(id, user.getEmail());
         if (user.getEmail() == null) {
-            throw new Exception("can not find users");
+            throw new IllegalArgumentException("can not find users");
         }
         if (set == null) {
-            throw new Exception("can not find set");
+            throw new IllegalArgumentException("can not find set");
         }
         set.setLearned(!set.isLearned());
         setDAO.save(set);
@@ -136,6 +136,6 @@ public class FlashcardServiceImpl implements FlashcardService {
 
     public void learn() {
         throw new UnsupportedOperationException();
-        //hold
+        // hold
     }
 }

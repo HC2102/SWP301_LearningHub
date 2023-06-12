@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
-public class FeatureServiceImpl implements FeatureService{
+public class FeatureServiceImpl implements FeatureService {
     @Autowired
     private final FeatureDAO featureDAO;
 
@@ -27,21 +27,21 @@ public class FeatureServiceImpl implements FeatureService{
     }
 
     @Override
-    public void setActive(int id,String mess) throws Exception {
-        Optional<Feature> optionalFeature =featureDAO.findById(id);
+    public void setActive(int id, String mess) {
+        Optional<Feature> optionalFeature = featureDAO.findById(id);
         Logger logger = Logger.getLogger(FeatureServiceImpl.class.getName());
-        if(optionalFeature.isPresent()){
+        if (optionalFeature.isPresent()) {
             Feature feature = optionalFeature.get();
             feature.setDescription(mess);
-            logger.log(Level.FINE,"retrieve data {0}",feature);
-            if(feature.getName() == null){
-                throw new Exception("item is null");
-            }else{
+            logger.log(Level.FINE, "retrieve data {0}", feature);
+            if (feature.getName() == null) {
+                throw new IllegalArgumentException("item is null");
+            } else {
                 feature.setActive(!feature.isActive());
                 featureDAO.save(feature);
             }
-        }else{
-            throw new RuntimeException("feature not found");
+        } else {
+            throw new IllegalArgumentException("feature not found");
         }
 
     }

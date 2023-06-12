@@ -6,6 +6,8 @@ import swp.group2.learninghub.model.Feature;
 
 public interface FeatureService {
     public List<Feature> showAll();
-    public void setActive(int id, String mess) throws Exception;
+
+    public void setActive(int id, String mess);
+
     public Feature findFeatureById(int id);
 }
