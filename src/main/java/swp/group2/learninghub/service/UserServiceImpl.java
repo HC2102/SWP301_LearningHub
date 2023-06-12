@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
              try{
             userDAO.save(user);
              }catch(Exception e){
-             throw new Exception("unable to change status: "+e.getMessage());
+             throw new IllegalArgumentException("unable to change status: "+e.getMessage());
              }
         } else {
             throw new IllegalArgumentException("email can not be found");
