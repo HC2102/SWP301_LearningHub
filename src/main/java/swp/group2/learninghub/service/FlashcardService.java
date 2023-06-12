@@ -12,7 +12,7 @@ public interface FlashcardService {
 
     FlashcardSet createFlashCardSet(FlashcardSet flashCardSet);
 
-    public List<Flashcard> showFlashCard(int set_id) throws Exception;
+    public List<Flashcard> showFlashCard(int setId) throws Exception;
 
     public Flashcard createUpdate(Flashcard newfc) throws Exception;
 

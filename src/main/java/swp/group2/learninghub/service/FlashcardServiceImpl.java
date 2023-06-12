@@ -9,7 +9,6 @@ import swp.group2.learninghub.model.FlashcardSet;
 import swp.group2.learninghub.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -135,7 +134,7 @@ public class FlashcardServiceImpl implements FlashcardService {
         return (set.isLearned());
     }
 
-    public void Learn() {
+    public void learn() {
         throw new UnsupportedOperationException();
         //hold
     }
