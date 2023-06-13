@@ -14,12 +14,12 @@ import java.util.Date;
 @Setter
 @Entity
 @ToString
-public class Note {
+public class Board {
     @Id
     private int id;
-    private String title;
-    private String description;
-    private String userId;
+    private String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
+    private int noteId;
+    private boolean isActive;
 }
