@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-// @CrossOrigin(origins = "http://127.0.0.1:3000")
 @RequestMapping("/api/v1/user")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UserController {
     @Autowired
     HttpSession session;

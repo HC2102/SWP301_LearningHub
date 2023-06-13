@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-// @CrossOrigin(origins = "http://127.0.0.1:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/v1/flashcard")
 public class FlashcardController {
     /* Variable and constructor section */

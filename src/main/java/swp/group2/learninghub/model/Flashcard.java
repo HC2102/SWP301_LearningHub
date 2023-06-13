@@ -15,6 +15,14 @@ public class Flashcard {
     public Flashcard() {
     }
 
+    public Flashcard(int id, int setId, String term, String definition, int position) {
+        this.id = id;
+        this.setId = setId;
+        this.term = term;
+        this.definition = definition;
+        this.position = position;
+    }
+
     public int getId() {
         return id;
     }
