@@ -22,6 +22,16 @@ public class FlashcardSet {
     public FlashcardSet() {
     }
 
+    public FlashcardSet(int id, String userId, String title, String description, Date createdDate, boolean isActive, boolean isLearned) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.description = description;
+        this.createdDate = createdDate;
+        this.isActive = isActive;
+        this.isLearned = isLearned;
+    }
+
     // Getters and setters
 
     public int getId() {

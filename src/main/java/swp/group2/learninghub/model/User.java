@@ -33,17 +33,28 @@ public class User {
         this.signupDate = signupDate;
     }
 
-
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getRealName() {
         return realName;
     }
 
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
     public String getPhoneNum() {
         return phoneNum;
+    }
+
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
     }
 
     public String getPassword() {
