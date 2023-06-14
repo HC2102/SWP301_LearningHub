@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CardService {
     List<Card> getCardsByLabelId(int id);
+  public List<Card> getByColId(int colId);
 }

@@ -18,5 +18,10 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<Card> getCardsByLabelId(int id) {
         return cardDAO.findAllByLabelsId(id);
+    @Autowired
+    public CardDAO cardDAO;
+    @Override
+    public List<Card> getByColId(int colId) {
+        return cardDAO.findCardsByColumnId(colId);
     }
 }

@@ -31,7 +31,10 @@ public class BoardLabelServiceImpl implements BoardLabelService {
         Optional<BoardLabel> label = boardLabelDAO.findById(id);
         return label.orElse(null);
     }
-
+    @Override
+    public List<BoardLabel> getLabelsByCardId(int cardId){
+        throw new UnsupportedOperationException();
+    }
     @Override
     public BoardLabel createLabel(BoardLabel label) {
         return boardLabelDAO.save(label);

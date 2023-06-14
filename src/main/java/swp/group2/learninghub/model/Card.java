@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -17,14 +19,6 @@ import java.util.Date;
 public class Card {
     @Id
     private int id;
-    @ManyToMany
-    @JoinTable(
-        name ="card_label",
-            joinColumns = @JoinColumn(name = "card_id"),
-        inverseJoinColumns = @JoinColumn(name = "label_id")
-
-    )
-    private ArrayList<BoardLabel> labels;
     private int columnId;
     private String name;
     private String description;
@@ -51,5 +45,4 @@ public class Card {
             label.removeCard(this); // Remove the card from the label's list of cards
         }
     }
-
 }
