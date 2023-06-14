@@ -24,11 +24,11 @@ public class TaskManagementController {
     @Autowired
     public BoardService boardService;
     @Autowired
-    public BoardLabelService boardLabelService;
-    @Autowired
     public ColumnService columnService;
     @Autowired
     public CardService cardService;
+    @Autowired
+    public CardLabelService cardLabelService;
     @Autowired
     public CoreLabelsService coreLabelsService;
 
@@ -37,6 +37,10 @@ public class TaskManagementController {
         return"Connected";
     }
 
+    @GetMapping("/cardlabel")
+    public void mapping(@RequestBody CardLabel cardLabel){
+        cardLabelService.addLabelToCard(cardLabel);
+    }
     @PostMapping()
     public String createNote(@RequestBody Note newNote){
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
@@ -95,7 +99,7 @@ public class TaskManagementController {
                 cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
                 //each card retrieve tags inside
                 for(Card c : cardList){
-                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
+//                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
                     cardData.add(new CardData(c,labelList));
                 }
                 result.put(k.getName(),new ColumnData(k.getName(),cardData));

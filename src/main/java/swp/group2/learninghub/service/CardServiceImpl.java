@@ -10,15 +10,11 @@ import java.util.List;
 @Service
 public class CardServiceImpl implements CardService {
     @Autowired
-    private final CardDAO cardDAO;
+    public CardDAO cardDAO;
 
-    @Autowired
-    public CardServiceImpl(CardDAO cardDAO) {
-        this.cardDAO = cardDAO;
-    }
     @Override
     public List<Card> getCardsByLabelId(int id) {
-        return cardDAO.findAllByLabelsId(id);
+        return null;
     }
     @Override
     public List<Card> getByColId ( int colId){

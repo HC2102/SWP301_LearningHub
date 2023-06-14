@@ -14,8 +14,8 @@ public interface BoardLabelDAO extends JpaRepository<BoardLabel,Integer> {
     void deleteById(int id);
     Optional<BoardLabel> findById(int id);
     List<BoardLabel> findAllByBoardId(int boardId);
-    @Query("SELECT bl FROM BoardLabel bl JOIN bl.cards c WHERE c.id = :cardId")
-    List<BoardLabel> findAllByCardId(int cardId);
-    @Query("SELECT COUNT(bl) FROM BoardLabel bl WHERE bl.cards IS NOT EMPTY")
-    int countLabelsByCard();
+//    @Query("SELECT bl FROM BoardLabel bl JOIN bl.cards c WHERE c.id = :cardId")
+//    List<BoardLabel> findAllByCardId(int cardId);
+//    @Query("SELECT COUNT(bl) FROM BoardLabel bl WHERE bl.cards IS NOT EMPTY")
+//    int countLabelsByCard();
 }

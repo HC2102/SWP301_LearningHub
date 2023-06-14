@@ -13,12 +13,8 @@ import java.util.Optional;
 public class BoardLabelServiceImpl implements BoardLabelService {
 
     @Autowired
-    private final BoardLabelDAO boardLabelDAO;
+    private BoardLabelDAO boardLabelDAO;
 
-    @Autowired
-    public BoardLabelServiceImpl(BoardLabelDAO boardLabelDAO) {
-        this.boardLabelDAO = boardLabelDAO;
-    }
 
     @Override
     public List<BoardLabel> getAllLabelsByBoardId(int boardId) {
@@ -47,7 +43,8 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     }
     @Override
     public List<BoardLabel> getAllLabelsByCardId(int cardId) {
-        return boardLabelDAO.findAllByCardId(cardId);
+//        return boardLabelDAO.findAllByCardId(cardId);
+        return null;
     }
     @Override
     public void addLabelToCard(int cardId, int labelId) {
