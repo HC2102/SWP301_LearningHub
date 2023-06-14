@@ -11,10 +11,11 @@ import lombok.*;
 @Setter
 @Entity
 @ToString
-public class Column {
+public class KanbanColumn {
     @Id
     private int id;
     private int boardId;
     private String name;
     private int position;
+    private boolean isActive;
 }
