@@ -19,10 +19,27 @@ public class BoardLabel {
     private int boardId;
     private String name;
     private String color;
-    @ManyToMany
-    @JoinTable(name="CardLabel",
-    joinColumns = @JoinColumn(name = "card_id"),
-    inverseJoinColumns = @JoinColumn(name = "label_id")
-    )
-    private List<Card> cards = new ArrayList<>();
+
+    public void addCard(Card card) {
+        if (cards == null) {
+            cards = new ArrayList<>();
+        }
+        cards.add(card);
+        card.addLabel(this); // Add the label to the card's list of labels
+    }
+
+    public void removeCard(Card card) {
+        if (cards != null) {
+            cards.remove(card);
+            card.removeLabel(this); // Remove the label from the card's list of labels
+        }
+    }
+
+    public void addLabel(BoardLabel label) {
+        
+    }
+
+    public void removeLabel(BoardLabel label) {
+
+    }
 }

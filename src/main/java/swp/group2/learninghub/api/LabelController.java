@@ -4,7 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import swp.group2.learninghub.model.BoardLabel;
+import swp.group2.learninghub.model.Card;
 import swp.group2.learninghub.model.CoreLabel;
+import swp.group2.learninghub.service.BoardLabelService;
+import swp.group2.learninghub.service.CardService;
 import swp.group2.learninghub.service.CoreLabelsService;
 
 import java.util.List;
@@ -12,11 +16,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/labels")
 public class LabelController {
-
+    private final BoardLabelService boardLabelService;
+    private final CardService cardService;
     private final CoreLabelsService coreLabelService;
 
     @Autowired
-    public LabelController(CoreLabelsService coreLabelsService) {
+    public LabelController(BoardLabelService boardLabelService, CardService cardService, CoreLabelsService coreLabelsService) {
+        this.boardLabelService = boardLabelService;
+        this.cardService = cardService;
         this.coreLabelService = coreLabelsService;
     }
 
@@ -63,5 +70,27 @@ public class LabelController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    @GetMapping("/{id}/cards")
+    public ResponseEntity<List<Card>> getCardsByLabelId(@PathVariable int id) {
+        BoardLabel label = boardLabelService.getLabelById(id);
+        if (label != null) {
+            List<Card> cards = cardService.getCardsByLabelId(id);
+            return new ResponseEntity<>(cards, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/{labelId}/cards/{cardId}")
+    public ResponseEntity<Void> addLabelToCard(@PathVariable int labelId, @PathVariable int cardId) {
+        boardLabelService.addLabelToCard(cardId, labelId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{labelId}/cards/{cardId}")
+    public ResponseEntity<Void> removeLabelFromCard(@PathVariable int labelId, @PathVariable int cardId) {
+        boardLabelService.removeLabelFromCard(cardId, labelId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
