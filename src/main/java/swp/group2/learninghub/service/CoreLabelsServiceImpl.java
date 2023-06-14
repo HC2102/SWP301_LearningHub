@@ -23,7 +23,7 @@ public class CoreLabelsServiceImpl implements CoreLabelsService {
     }
 
     @Override
-    public CoreLabel getLabelById(Long id) {
+    public CoreLabel getLabelById(int id) {
         Optional<CoreLabel> label = coreLabelDAO.findById(id);
         return label.orElse(null);
     }
@@ -39,7 +39,7 @@ public class CoreLabelsServiceImpl implements CoreLabelsService {
     }
 
     @Override
-    public void deleteLabel(Long id) {
+    public void deleteLabel(int id) {
         coreLabelDAO.deleteById(id);
     }
 }

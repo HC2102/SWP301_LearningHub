@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CardLabelDAO extends JpaRepository<BoardLabel,Integer> {
+public interface CardLabelDAO extends JpaRepository<CardLabel,Integer> {
     void deleteById(Long id);
-    CardLabel save(CardLabel label);
     Optional<CardLabel> findById(Long id);
 
     List<CardLabel> findAllByCardId(Long cardId);

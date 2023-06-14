@@ -17,6 +17,4 @@ public class CoreLabel {
     private String name;
     private String color;
 
-    public void setId(Long id) {
-    }
 }

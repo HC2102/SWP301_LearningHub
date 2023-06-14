@@ -10,7 +10,7 @@ import swp.group2.learninghub.service.CoreLabelsService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/labels")
+@RequestMapping("/api/v1/labels")
 public class LabelController {
 
     private final CoreLabelsService coreLabelService;
@@ -27,7 +27,7 @@ public class LabelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CoreLabel> getLabelById(@PathVariable Long id) {
+    public ResponseEntity<CoreLabel> getLabelById(@PathVariable int id) {
         CoreLabel label = coreLabelService.getLabelById(id);
         if (label != null) {
             return new ResponseEntity<>(label, HttpStatus.OK);
@@ -43,7 +43,7 @@ public class LabelController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CoreLabel> updateLabel(@PathVariable Long id, @RequestBody CoreLabel label) {
+    public ResponseEntity<CoreLabel> updateLabel(@PathVariable int id, @RequestBody CoreLabel label) {
         CoreLabel existingLabel = coreLabelService.getLabelById(id);
         if (existingLabel != null) {
             label.setId(id);
@@ -55,10 +55,10 @@ public class LabelController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLabel(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLabel(@PathVariable int id) {
         CoreLabel existingLabel = coreLabelService.getLabelById(id);
         if (existingLabel != null) {
-            coreLabelService.deleteLabel(id);
+            coreLabelService.deleteLabel( id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
