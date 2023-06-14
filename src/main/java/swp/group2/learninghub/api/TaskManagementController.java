@@ -95,7 +95,7 @@ public class TaskManagementController {
                 cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
                 //each card retrieve tags inside
                 for(Card c : cardList){
-                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
+                    labelList = (ArrayList<BoardLabel>) boardLabelService.getAllLabelsByCardId(c.getId());
                     cardData.add(new CardData(c,labelList));
                 }
                 result.put(k.getName(),new ColumnData(k.getName(),cardData));
@@ -119,7 +119,7 @@ public class TaskManagementController {
                 cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
                 //each card retrieve tags inside
                 for(Card c : cardList){
-                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
+                    labelList = (ArrayList<BoardLabel>) boardLabelService.getAllLabelsByCardId(c.getId());
                     cardData.add(new CardData(c,labelList));
                 }
                 result.put(k.getName(),new ColumnData(k.getName(),cardData));

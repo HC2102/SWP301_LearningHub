@@ -14,10 +14,14 @@ import swp.group2.learninghub.service.CoreLabelsService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/v1/labels")
 public class LabelController {
+    @Autowired
     private final BoardLabelService boardLabelService;
+    @Autowired
     private final CardService cardService;
+    @Autowired
     private final CoreLabelsService coreLabelService;
 
     @Autowired

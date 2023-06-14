@@ -12,8 +12,8 @@ import java.util.Optional;
 @Service
 public class BoardLabelServiceImpl implements BoardLabelService {
 
+    @Autowired
     private final BoardLabelDAO boardLabelDAO;
-    private BoardLabelDAO cardDAO;
 
     @Autowired
     public BoardLabelServiceImpl(BoardLabelDAO boardLabelDAO) {
@@ -30,10 +30,6 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     public BoardLabel getLabelById(int id) {
         Optional<BoardLabel> label = boardLabelDAO.findById(id);
         return label.orElse(null);
-    }
-    @Override
-    public List<BoardLabel> getLabelsByCardId(int cardId){
-        throw new UnsupportedOperationException();
     }
     @Override
     public BoardLabel createLabel(BoardLabel label) {
@@ -55,22 +51,22 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     }
     @Override
     public void addLabelToCard(int cardId, int labelId) {
-        BoardLabel card = cardDAO.findById(cardId).orElse(null);
-        BoardLabel label = boardLabelDAO.findById(labelId).orElse(null);
-        if (card != null && label != null) {
-            card.addLabel(label);
-            cardDAO.save(card);
-        }
+//        BoardLabel card = boardLabelDAO.findById(cardId).orElse(null);
+//        BoardLabel label = boardLabelDAO.findById(labelId).orElse(null);
+//        if (card != null && label != null) {
+//            card.boardLabelDAO(label);
+//            boardLabelDAO.save(card);
+//        }
     }
 
     @Override
     public void removeLabelFromCard(int cardId, int labelId) {
-        BoardLabel card = cardDAO.findById(cardId).orElse(null);
-        BoardLabel label = boardLabelDAO.findById(labelId).orElse(null);
-        if (card != null && label != null) {
-            card.removeLabel(label);
-            cardDAO.save(card);
-        }
+//        BoardLabel card = cardDAO.findById(cardId).orElse(null);
+//        BoardLabel label = boardLabelDAO.findById(labelId).orElse(null);
+//        if (card != null && label != null) {
+//            card.removeLabel(label);
+//            cardDAO.save(card);
+//        }
     }
 
 }
