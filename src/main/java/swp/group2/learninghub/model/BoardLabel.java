@@ -39,8 +39,10 @@ public class BoardLabel {
     }
 
     public void addLabel(BoardLabel label) {
+        
     }
 
     public void removeLabel(BoardLabel label) {
+
     }
 }
