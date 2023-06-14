@@ -8,4 +8,5 @@ public interface BoardLabelService {
     BoardLabel createLabel(BoardLabel label);
     BoardLabel updateLabel(BoardLabel label);
     void deleteLabel(Long id);
+    public List<BoardLabel> getLabelsByCardId(int cardId);
 }

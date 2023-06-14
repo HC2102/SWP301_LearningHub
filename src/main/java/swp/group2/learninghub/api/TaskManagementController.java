@@ -1,12 +1,12 @@
 package swp.group2.learninghub.api;
 
-import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swp.group2.learninghub.model.*;
-import swp.group2.learninghub.model.clientModel.BoardData;
+import swp.group2.learninghub.model.clientModel.CardData;
+import swp.group2.learninghub.model.clientModel.ColumnData;
 import swp.group2.learninghub.service.*;
 
 import java.util.ArrayList;
@@ -24,11 +24,14 @@ public class TaskManagementController {
     @Autowired
     public BoardService boardService;
     @Autowired
+    public BoardLabelService boardLabelService;
+    @Autowired
     public ColumnService columnService;
     @Autowired
     public CardService cardService;
     @Autowired
     public CoreLabelsService coreLabelsService;
+
     @GetMapping("test")
     public String test(){
         return"Connected";
@@ -78,15 +81,28 @@ public class TaskManagementController {
         }
     }
 
-    @GetMapping("/formation")
-    public Map<String,BoardData> testForm(){
-        List<BoardData> list = new ArrayList<>();
-        HashMap<String,BoardData> result = new HashMap<>();
-        List<KanbanColumn> kbList = columnService.getColumnsByBoardId(1);
-        for(KanbanColumn k : kbList){
-            list.add(new BoardData(k.getName(),cardService.getByColId(6)));
-            result.put(k.getName(),new BoardData(k.getName(),cardService.getByColId(6)));
+    @GetMapping("/kanban/data")
+    public Map<String, ColumnData> kanbanData(@RequestParam("boardId") int boardId){
+        HashMap<String, ColumnData> result = new HashMap<>();
+        ArrayList<Card> cardList = new ArrayList<>();
+        ArrayList<BoardLabel> labelList = new ArrayList<>();
+        ArrayList<CardData> cardData = new ArrayList<>();
+        try{
+            //get all column in the table
+            List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
+            for(KanbanColumn k : kbList){
+                //for retrieve all cards inside each column
+                cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
+                //each card retrieve tags inside
+                for(Card c : cardList){
+                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
+                    cardData.add(new CardData(c,labelList));
+                }
+                result.put(k.getName(),new ColumnData(k.getName(),cardData));
+            }
+            return result;
+        } catch (Exception e){
+            return null;
         }
-        return result;
     }
 }

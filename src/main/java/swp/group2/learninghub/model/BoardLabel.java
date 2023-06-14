@@ -1,8 +1,10 @@
 package swp.group2.learninghub.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,4 +19,10 @@ public class BoardLabel {
     private int boardId;
     private String name;
     private String color;
+    @ManyToMany
+    @JoinTable(name="CardLabel",
+    joinColumns = @JoinColumn(name = "card_id"),
+    inverseJoinColumns = @JoinColumn(name = "label_id")
+    )
+    private List<Card> cards = new ArrayList<>();
 }

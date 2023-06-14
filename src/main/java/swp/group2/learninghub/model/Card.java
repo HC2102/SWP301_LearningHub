@@ -7,6 +7,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -28,7 +29,5 @@ public class Card {
     private boolean isActive;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
-
-    //to resolved many to many
 
 }

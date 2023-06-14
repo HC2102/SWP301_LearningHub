@@ -1,6 +1,7 @@
 package swp.group2.learninghub.model.clientModel;
 
 import lombok.*;
+import swp.group2.learninghub.model.BoardLabel;
 import swp.group2.learninghub.model.Card;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class BoardData {
-    private String title;
-    private List<Card> items;
+public class CardData {
+    public Card card;
+    public List<BoardLabel> labels;
 }
