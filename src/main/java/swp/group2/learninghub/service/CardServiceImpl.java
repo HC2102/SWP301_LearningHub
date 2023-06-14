@@ -5,11 +5,19 @@ import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.CardDAO;
 import swp.group2.learninghub.model.Card;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CardServiceImpl implements CardService {
+    private final CardDAO cardDAO;
+
+    @Autowired
+    public CardServiceImpl(CardDAO cardDAO) {
+        this.cardDAO = cardDAO;
+    }
+    @Override
+    public List<Card> getCardsByLabelId(int id) {
+        return cardDAO.findAllByLabelsId(id);
     @Autowired
     public CardDAO cardDAO;
     @Override
