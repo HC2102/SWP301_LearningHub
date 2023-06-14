@@ -1,7 +1,7 @@
 package swp.group2.learninghub.model;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 @Data
@@ -11,10 +11,12 @@ import lombok.*;
 @Setter
 @Entity
 @ToString
-public class CoreLabel {
+public class CardLabel {
     @Id
     private int id;
-    private String name;
-    private String color;
+    @ManyToOne
+    private BoardLabel boardLabel;
 
+    @ManyToOne
+    private Card card;
 }
