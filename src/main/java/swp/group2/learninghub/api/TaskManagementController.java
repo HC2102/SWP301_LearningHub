@@ -105,4 +105,28 @@ public class TaskManagementController {
             return null;
         }
     }
+    @PostMapping("/kanban/data")
+    public Map<String, ColumnData> kanbanDataUpdate(@RequestParam("boardId") int boardId){
+        HashMap<String, ColumnData> result = new HashMap<>();
+        ArrayList<Card> cardList = new ArrayList<>();
+        ArrayList<BoardLabel> labelList = new ArrayList<>();
+        ArrayList<CardData> cardData = new ArrayList<>();
+        try{
+            //get all column in the table
+            List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
+            for(KanbanColumn k : kbList){
+                //for retrieve all cards inside each column
+                cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
+                //each card retrieve tags inside
+                for(Card c : cardList){
+                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
+                    cardData.add(new CardData(c,labelList));
+                }
+                result.put(k.getName(),new ColumnData(k.getName(),cardData));
+            }
+            return result;
+        } catch (Exception e){
+            return null;
+        }
+    }
 }
