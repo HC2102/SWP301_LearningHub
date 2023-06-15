@@ -1,5 +1,6 @@
 package swp.group2.learninghub.api;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,13 @@ public class TaskManagementController {
     public CardLabelService cardLabelService;
     @Autowired
     public CoreLabelsService coreLabelsService;
+    @Autowired
+    HttpSession session;
+    @Autowired
+    private FeatureService featureService;
+    private static final int FEATURE_ID = 2;
+    private static final String SUCCESSMSG = "Success";
+    private static final String FAILMSG = "Fail";
 
     @GetMapping("test")
     public String test(){
@@ -107,6 +115,31 @@ public class TaskManagementController {
             return result;
         } catch (Exception e){
             return null;
+        }
+    }
+
+    @GetMapping("/notes")
+    public ResponseEntity<ResponseObject> showAllNotes() {
+        try {
+            User userSession = (User) session.getAttribute("user");
+            if(userSession == null) {
+                throw new IllegalArgumentException("can not find user information for this feature");
+            }
+            isFeatureActive();
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG, "retrieve notes of " +
+                    userSession.getEmail(),
+                    noteService.showUserNotesByEmail(userSession.getEmail())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, "account fail to connect: " + e.getMessage(), null));
+        }
+    }
+
+    private void isFeatureActive() {
+        Feature feature = featureService.findFeatureById(FEATURE_ID);
+        if(!feature.isActive()) {
+            throw new IllegalArgumentException("Feature is disable: " + feature.getDescription());
         }
     }
 }
