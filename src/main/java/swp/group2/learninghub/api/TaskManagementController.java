@@ -34,6 +34,7 @@ public class TaskManagementController {
     public CoreLabelsService coreLabelsService;
     @Autowired
     HttpSession session;
+    @Autowired
     private FeatureService featureService;
     private static final int FEATURE_ID = 2;
     private static final String SUCCESSMSG = "Success";
