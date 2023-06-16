@@ -1,9 +1,13 @@
 package swp.group2.learninghub.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import swp.group2.learninghub.model.*;
 import swp.group2.learninghub.model.clientModel.CardData;
@@ -11,6 +15,7 @@ import swp.group2.learninghub.model.clientModel.ColumnData;
 import swp.group2.learninghub.service.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +25,7 @@ import java.util.logging.Logger;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/v1/note")
 public class TaskManagementController {
+    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskManagementController.class);
     @Autowired
     public NoteService noteService;
     @Autowired
@@ -112,8 +118,9 @@ public class TaskManagementController {
     }
 
     @GetMapping("/kanban/data")
-    public Map<String, ColumnData> kanbanData(@RequestParam("boardId") int boardId){
-        HashMap<String, ColumnData> result = new HashMap<>();
+    @ResponseBody
+    public Map<Integer, ColumnData> kanbanData(@RequestParam("boardId") int boardId){
+        HashMap<Integer, ColumnData> result = new HashMap<>();
         ArrayList<Card> cardList = new ArrayList<>();
         ArrayList<BoardLabel> labelList = new ArrayList<>();
         ArrayList<CardData> cardData = new ArrayList<>();
@@ -125,22 +132,51 @@ public class TaskManagementController {
                 cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
                 //each card retrieve tags inside
                 for(Card c : cardList){
-                    labelList = (ArrayList<BoardLabel>) cardLabelService.findLabelsInCard(c.getId());
-                    cardData.add(new CardData(String.valueOf(c.getId()),c.getName(),labelList));
+                    labelList = cardLabelService.findLabelsInCard(c.getId());
+                    cardData.add(new CardData(c.getId(),c.getName(),labelList));
                 }
-                result.put("column"+k.getName(),new ColumnData(k.getName(),cardData));
+                result.put(k.getId(),new ColumnData(k.getName(),cardData));
             }
             return result;
         } catch (Exception e){
             return null;
         }
     }
+    @Transactional
     @PostMapping("/kanban/data")
-    public Map<String, ColumnData> kanbanDataUpdate(@RequestBody Map<String, ColumnData> boardData){
+    public Map<Integer, ColumnData> kanbanDataUpdate(@RequestParam("boardId") int boardId,@RequestBody Map<String,ColumnData>  boardData) {
         try{
-            return boardData;
+            int tempColId;
+            List<CardData> tempColData;
+            Card tempCard;
+            List<BoardLabel> cardLabels;
+            List<CardLabel> updated = new ArrayList<>();
+            int tempPosition;
+            // search data for each column
+            for(Map.Entry<String, ColumnData> col : boardData.entrySet()){
+                tempPosition =1;
+                tempColId = Integer.parseInt(col.getKey());
+                tempColData = col.getValue().getItems();
+                for(CardData cd : tempColData){
+                    tempCard = cardService.getById(cd.getId());
+                    //label handle
+                    cardLabels = cd.getLabels();
+                    for(BoardLabel cl : cardLabels){
+                        updated.add(new CardLabel(cl.getId(),cd.getId()));
+                    }
+                    cardLabelService.updateCardLabelData(cd.getId(),updated);
+                    // handle the position of the card
+                    tempCard.setPosition(tempPosition);
+                    tempCard.setColumnId(tempColId);
+                    cardService.updateCard(tempCard);
+                    tempPosition ++;
+                }
+            }
+            return kanbanData(boardId);
         } catch (Exception e) {
-            return null;
+            logger.warn(e.getMessage());
+            logger.warn(boardData.toString());
+            return kanbanData(boardId);
         }
     }
     @GetMapping("/notes")

@@ -14,7 +14,7 @@ public interface CardDAO extends JpaRepository<Card,Integer> {
 //    List<Card> findAllByLabelsId(int labelId);
 
 
-    public List<Card> findCardsByColumnId(int ColumnId);
+    public List<Card> findCardsByColumnIdOrderByPosition(int ColumnId);
 
 }
 

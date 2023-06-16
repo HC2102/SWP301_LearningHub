@@ -6,6 +6,7 @@ import swp.group2.learninghub.dao.CardDAO;
 import swp.group2.learninghub.model.Card;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CardServiceImpl implements CardService {
@@ -16,8 +17,26 @@ public class CardServiceImpl implements CardService {
     public List<Card> getCardsByLabelId(int id) {
         return null;
     }
+
+    @Override
+    public Card getById(int id) {
+        Optional<Card> target = cardDAO.findById(id);
+        if(target.isPresent()){
+            return target.get();
+        }else{
+            return null;
+        }
+    }
+    public void updateCard(Card newCard){
+        try{
+            cardDAO.save(newCard);
+        }catch(Exception e){
+            throw e;
+        }
+    }
+
     @Override
     public List<Card> getByColId ( int colId){
-        return cardDAO.findCardsByColumnId(colId);
+        return cardDAO.findCardsByColumnIdOrderByPosition(colId);
     }
 }

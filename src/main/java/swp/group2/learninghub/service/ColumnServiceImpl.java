@@ -19,6 +19,7 @@ public class ColumnServiceImpl implements ColumnService{
 
     @Override
     public List<KanbanColumn> getColumnsByBoardId(int boardId) {
-        return columnDAO.getByBoardId(boardId);
+//        return columnDAO.getByBoardId(boardId);
+        return columnDAO.getByBoardId2(boardId);
     }
 }

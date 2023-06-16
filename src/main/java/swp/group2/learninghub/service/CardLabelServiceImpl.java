@@ -54,4 +54,12 @@ public class CardLabelServiceImpl implements CardLabelService{
         }
         return cardList;
     }
+
+    @Override
+    public void updateCardLabelData(int cardId, List<CardLabel> updated) {
+        //delete all card label record related to this cardId
+        cardLabelDAO.deleteAllByCardId(cardId);
+        //add new label information to this card
+        cardLabelDAO.saveAll(updated);
+    }
 }

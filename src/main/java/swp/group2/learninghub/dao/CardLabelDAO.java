@@ -12,4 +12,6 @@ public interface CardLabelDAO extends JpaRepository<CardLabel,Integer> {
     public List<CardLabel> findAllByCardId(int cardId);
     public List<CardLabel> findAllByLabelId(int labelId);
 
+    public void deleteAllByCardId(int cardId);
+
 }

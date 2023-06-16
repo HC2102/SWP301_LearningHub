@@ -27,20 +27,5 @@ public class Card {
     private boolean isActive;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
-
-//    //to resolved many to many
-//    public void addLabel(BoardLabel labels) {
-//        if (labels == null) {
-//            labels = new ArrayList<>();
-//        }
-//        labels.add(label);
-//        label.addCard(this); // Add the card to the label's list of cards
-//    }
-//
-//    public void removeLabel(BoardLabel label) {
-//        if (labels != null) {
-//            labels.remove(label);
-//            label.removeCard(this); // Remove the card from the label's list of cards
-//        }
-//    }
+    private int position;
 }
