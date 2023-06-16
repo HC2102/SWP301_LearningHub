@@ -51,6 +51,24 @@ public class TaskManagementController {
             return e.getMessage();
         }
     }
+    @GetMapping("/cardLabel/card")
+    public ArrayList<Card> getCardsByLabel(@RequestParam(name = "id") int labelId){
+        try{
+            return cardLabelService.findCardsByLabel(labelId);
+        }catch (Exception e){
+            return new ArrayList<>();
+        }
+    }
+    @GetMapping("/cardLabel/label")
+    public ResponseEntity<ResponseObject> getLabelsByCard(@RequestParam(name = "id") int cardId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok","ok",cardLabelService.findLabelsInCard(cardId)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject("fail",e.getMessage(),null));
+        }
+    }
     @PostMapping("/board")
     public String createBoard(@RequestBody Board newBoard){
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
@@ -99,12 +117,20 @@ public class TaskManagementController {
                 cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
                 //each card retrieve tags inside
                 for(Card c : cardList){
-//                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
-                    cardData.add(new CardData(c,labelList));
+                    labelList = (ArrayList<BoardLabel>) cardLabelService.findLabelsInCard(c.getId());
+                    cardData.add(new CardData(String.valueOf(c.getId()),c.getName(),labelList));
                 }
-                result.put(k.getName(),new ColumnData(k.getName(),cardData));
+                result.put("column"+k.getName(),new ColumnData(k.getName(),cardData));
             }
             return result;
+        } catch (Exception e){
+            return null;
+        }
+    }
+    @PostMapping("/kanban/data")
+    public Map<String, ColumnData> kanbanDataUpdate(@RequestBody Map<String, ColumnData> boardData){
+        try{
+            return boardData;
         } catch (Exception e){
             return null;
         }
