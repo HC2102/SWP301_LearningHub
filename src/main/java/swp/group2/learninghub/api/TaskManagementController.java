@@ -58,12 +58,12 @@ public class TaskManagementController {
 
     @PostMapping()
     public String createNote(@RequestBody Note newNote) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             noteService.createNote(newNote);
             return "ok";
         } catch (Exception e) {
-            return e.getMessage();
+            logger.warn(e.getMessage());
+            return "fail";
         }
     }
 
@@ -89,7 +89,6 @@ public class TaskManagementController {
 
     @PostMapping("/board")
     public String createBoard(@RequestBody Board newBoard) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             boardService.createBoard(newBoard);
             return "ok";
@@ -100,7 +99,6 @@ public class TaskManagementController {
 
     @PostMapping("/column")
     public String createColumn(@RequestBody KanbanColumn newKanbanColumn) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             columnService.createNewColumn(newKanbanColumn);
             return "ok";
@@ -111,7 +109,6 @@ public class TaskManagementController {
 
     @GetMapping("/column")
     public ResponseEntity<ResponseObject> getColumn(@RequestParam int boardId) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success", "retrieved",
@@ -127,8 +124,9 @@ public class TaskManagementController {
     @ResponseBody
     public Map<Integer, ColumnData> kanbanData(@RequestParam("boardId") int boardId) {
         HashMap<Integer, ColumnData> result = new HashMap<>();
-
         try {
+            //if feature is active
+            isFeatureActive();
             //get all column in the table
             List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
             for (KanbanColumn k : kbList) {
@@ -144,7 +142,8 @@ public class TaskManagementController {
             }
             return result;
         } catch (Exception e) {
-            return null;
+            logger.warn(e.getMessage());
+            return Collections.emptyMap();
         }
     }
 
@@ -158,6 +157,8 @@ public class TaskManagementController {
             List<BoardLabel> cardLabels;
             List<CardLabel> updated = new ArrayList<>();
             int tempPosition;
+            //if feature active
+            isFeatureActive();
             // search data for each column
             for (Map.Entry<String, ColumnData> col : boardData.entrySet()) {
                 tempPosition = 1;
