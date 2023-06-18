@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @ToString
 public class CardData {
-    public Card card;
+    private int id;
+    public String cardTitle;
     public List<BoardLabel> labels;
 }

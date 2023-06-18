@@ -1,9 +1,13 @@
 package swp.group2.learninghub.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import swp.group2.learninghub.model.*;
 import swp.group2.learninghub.model.clientModel.CardData;
@@ -11,6 +15,7 @@ import swp.group2.learninghub.model.clientModel.ColumnData;
 import swp.group2.learninghub.service.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +25,17 @@ import java.util.logging.Logger;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/v1/note")
 public class TaskManagementController {
+    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskManagementController.class);
     @Autowired
     public NoteService noteService;
     @Autowired
     public BoardService boardService;
     @Autowired
-    public BoardLabelService boardLabelService;
-    @Autowired
     public ColumnService columnService;
     @Autowired
     public CardService cardService;
+    @Autowired
+    public CardLabelService cardLabelService;
     @Autowired
     public CoreLabelsService coreLabelsService;
     @Autowired
@@ -41,8 +47,13 @@ public class TaskManagementController {
     private static final String FAILMSG = "Fail";
 
     @GetMapping("test")
-    public String test(){
-        return"Connected";
+    public String test() {
+        return "Connected";
+    }
+
+    @GetMapping("/cardlabel")
+    public void mapping(@RequestBody CardLabel cardLabel) {
+        cardLabelService.addLabelToCard(cardLabel);
     }
 
     @PostMapping("/notes")
@@ -57,6 +68,27 @@ public class TaskManagementController {
                     new ResponseObject(FAILMSG, "Create note failed, reason: " + e.getMessage(), null));
         }
     }
+
+    @GetMapping("/cardLabel/card")
+    public ArrayList<Card> getCardsByLabel(@RequestParam(name = "id") int labelId) {
+        try {
+            return cardLabelService.findCardsByLabel(labelId);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    @GetMapping("/cardLabel/label")
+    public ResponseEntity<ResponseObject> getLabelsByCard(@RequestParam(name = "id") int cardId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "ok", cardLabelService.findLabelsInCard(cardId)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject("fail", e.getMessage(), null));
+        }
+    }
+
     @PostMapping("/board")
     public ResponseEntity<ResponseObject> createBoard(@RequestBody Board newBoard) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
@@ -68,52 +100,94 @@ public class TaskManagementController {
                     new ResponseObject(FAILMSG, "Create board failed, reason: " + e.getMessage(), null));
         }
     }
+
     @PostMapping("/column")
-    public String createColumn(@RequestBody KanbanColumn newKanbanColumn){
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
-        try{
+    public String createColumn(@RequestBody KanbanColumn newKanbanColumn) {
+        try {
             columnService.createNewColumn(newKanbanColumn);
             return "ok";
-        }catch (Exception e){
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
+
     @GetMapping("/column")
-    public ResponseEntity<ResponseObject> getColumn(@RequestParam int boardId){
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
-        try{
+    public ResponseEntity<ResponseObject> getColumn(@RequestParam int boardId) {
+        try {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("success","retrieved",
+                    new ResponseObject("success", "retrieved",
                             columnService.getColumnsByBoardId(boardId)));
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("fail","fail",
+                    new ResponseObject("fail", "fail",
                             null));
         }
     }
 
     @GetMapping("/kanban/data")
-    public Map<String, ColumnData> kanbanData(@RequestParam("boardId") int boardId){
-        HashMap<String, ColumnData> result = new HashMap<>();
-        ArrayList<Card> cardList = new ArrayList<>();
-        ArrayList<BoardLabel> labelList = new ArrayList<>();
-        ArrayList<CardData> cardData = new ArrayList<>();
-        try{
+    @ResponseBody
+    public Map<Integer, ColumnData> kanbanData(@RequestParam("boardId") int boardId) {
+        HashMap<Integer, ColumnData> result = new HashMap<>();
+        try {
+            //if feature is active
+            isFeatureActive();
             //get all column in the table
             List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
-            for(KanbanColumn k : kbList){
+            for (KanbanColumn k : kbList) {
                 //for retrieve all cards inside each column
-                cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
+                ArrayList<CardData> cardData = new ArrayList<>();
+                ArrayList<Card> cardList = (ArrayList<Card>) cardService.getByColId(k.getId());
                 //each card retrieve tags inside
-                for(Card c : cardList){
-                    labelList = (ArrayList<BoardLabel>) boardLabelService.getLabelsByCardId(c.getId());
-                    cardData.add(new CardData(c,labelList));
+                for (Card c : cardList) {
+                    ArrayList<BoardLabel> labelList = cardLabelService.findLabelsInCard(c.getId());
+                    cardData.add(new CardData(c.getId(), c.getName(), labelList));
                 }
-                result.put(k.getName(),new ColumnData(k.getName(),cardData));
+                result.put(k.getId(), new ColumnData(k.getName(), cardData));
             }
             return result;
-        } catch (Exception e){
-            return null;
+        } catch (Exception e) {
+            logger.warn(e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+
+    @Transactional
+    @PostMapping("/kanban/data")
+    public Map<Integer, ColumnData> kanbanDataUpdate(@RequestParam("boardId") int boardId, @RequestBody Map<String, ColumnData> boardData) {
+        try {
+            int tempColId;
+            List<CardData> tempColData;
+            Card tempCard;
+            List<BoardLabel> cardLabels;
+            List<CardLabel> updated = new ArrayList<>();
+            int tempPosition;
+            //if feature active
+            isFeatureActive();
+            // search data for each column
+            for (Map.Entry<String, ColumnData> col : boardData.entrySet()) {
+                tempPosition = 1;
+                tempColId = Integer.parseInt(col.getKey());
+                tempColData = col.getValue().getItems();
+                for (CardData cd : tempColData) {
+                    tempCard = cardService.getById(cd.getId());
+                    //label handle
+                    cardLabels = cd.getLabels();
+                    for (BoardLabel cl : cardLabels) {
+                        updated.add(new CardLabel(cl.getId(), cd.getId()));
+                    }
+                    cardLabelService.updateCardLabelData(cd.getId(), updated);
+                    // handle the position of the card
+                    tempCard.setPosition(tempPosition);
+                    tempCard.setColumnId(tempColId);
+                    cardService.updateCard(tempCard);
+                    tempPosition++;
+                }
+            }
+            return kanbanData(boardId);
+        } catch (Exception e) {
+            logger.warn(e.getMessage());
+            logger.warn(boardData.toString());
+            return kanbanData(boardId);
         }
     }
 
@@ -121,7 +195,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> showAllNotes() {
         try {
             User userSession = (User) session.getAttribute("user");
-            if(userSession == null) {
+            if (userSession == null) {
                 throw new IllegalArgumentException("can not find user information for this feature");
             }
             isFeatureActive();
@@ -141,7 +215,7 @@ public class TaskManagementController {
 
     private void isFeatureActive() {
         Feature feature = featureService.findFeatureById(FEATURE_ID);
-        if(!feature.isActive()) {
+        if (!feature.isActive()) {
             throw new IllegalArgumentException("Feature is disable: " + feature.getDescription());
         }
     }
