@@ -22,4 +22,12 @@ public class Note {
     private String userId;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 }

@@ -5,6 +5,6 @@ import swp.group2.learninghub.model.Note;
 import java.util.List;
 
 public interface NoteService {
-    public void createNote(Note note);
+    public Note createNote(Note note);
     public List<Note> showUserNotesByEmail(String email);
 }
