@@ -45,24 +45,27 @@ public class TaskManagementController {
         return"Connected";
     }
 
-    @PostMapping()
-    public String createNote(@RequestBody Note newNote){
+    @PostMapping("/notes")
+    public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
-        try{
-            noteService.createNote(newNote);
-            return "ok";
-        }catch (Exception e){
-            return e.getMessage();
+        try {
+            Note note = noteService.createNote(newNote);
+            boardService.createBoard(new Board(note.getTitle(), note.getCreatedDate(), note.getId(), true));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create note successfully!", note));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, "Create note failed, reason: " + e.getMessage(), null));
         }
     }
     @PostMapping("/board")
-    public String createBoard(@RequestBody Board newBoard){
+    public ResponseEntity<ResponseObject> createBoard(@RequestBody Board newBoard) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
-        try{
-            boardService.createBoard(newBoard);
-            return "ok";
-        }catch (Exception e){
-            return e.getMessage();
+        try {
+            Board board = boardService.createBoard(newBoard);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create board successfully!", board));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, "Create board failed, reason: " + e.getMessage(), null));
         }
     }
     @PostMapping("/column")
@@ -131,6 +134,10 @@ public class TaskManagementController {
                     new ResponseObject(FAILMSG, "account fail to connect: " + e.getMessage(), null));
         }
     }
+
+    @PutMapping("/notes")
+
+    @DeleteMapping("/notes")
 
     private void isFeatureActive() {
         Feature feature = featureService.findFeatureById(FEATURE_ID);
