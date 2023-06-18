@@ -210,8 +210,28 @@ public class TaskManagementController {
     }
 
     @PutMapping("/notes")
+    public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
+        try {
+            Note updatedNote = noteService.updateNote(note);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(SUCCESSMSG, "Note updated!", updatedNote));
 
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject(FAILMSG, "Failed to update note: " + e.getMessage(), null));
+        }
+    }
+
+    @Transactional
     @DeleteMapping("/notes")
+    public ResponseEntity<ResponseObject> deleteNoteById(@RequestParam int id) {
+        try {
+            noteService.removeNoteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Delete card: " + id, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseObject(FAILMSG, "Cannot delete card: " + id + ", reason: " + e.getMessage(), null));
+        }
+    }
 
     private void isFeatureActive() {
         Feature feature = featureService.findFeatureById(FEATURE_ID);

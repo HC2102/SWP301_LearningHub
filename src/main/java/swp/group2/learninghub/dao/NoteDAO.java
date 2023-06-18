@@ -12,4 +12,6 @@ import java.util.List;
 public interface NoteDAO extends JpaRepository<Note,Integer> {
     @Query("SELECT n FROM Note n where n.userId=:email")
     public List<Note> showUserNotesByEmail(@Param("email") String email);
+
+    public void removeNoteById(int id);
 }
