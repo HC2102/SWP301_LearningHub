@@ -22,4 +22,11 @@ public class Board {
     private Date createdDate;
     private int noteId;
     private boolean isActive;
+
+    public Board(String name, Date createdDate, int noteId, boolean isActive) {
+        this.name = name;
+        this.createdDate = createdDate;
+        this.noteId = noteId;
+        this.isActive = isActive;
+    }
 }

@@ -56,14 +56,16 @@ public class TaskManagementController {
         cardLabelService.addLabelToCard(cardLabel);
     }
 
-    @PostMapping()
-    public String createNote(@RequestBody Note newNote) {
+    @PostMapping("/notes")
+    public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
-            noteService.createNote(newNote);
-            return "ok";
+            Note note = noteService.createNote(newNote);
+            boardService.createBoard(new Board(note.getTitle(), note.getCreatedDate(), note.getId(), true));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create note successfully!", note));
         } catch (Exception e) {
-            return e.getMessage();
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, "Create note failed, reason: " + e.getMessage(), null));
         }
     }
 
@@ -88,19 +90,19 @@ public class TaskManagementController {
     }
 
     @PostMapping("/board")
-    public String createBoard(@RequestBody Board newBoard) {
+    public ResponseEntity<ResponseObject> createBoard(@RequestBody Board newBoard) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
-            boardService.createBoard(newBoard);
-            return "ok";
+            Board board = boardService.createBoard(newBoard);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create board successfully!", board));
         } catch (Exception e) {
-            return e.getMessage();
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, "Create board failed, reason: " + e.getMessage(), null));
         }
     }
 
     @PostMapping("/column")
     public String createColumn(@RequestBody KanbanColumn newKanbanColumn) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             columnService.createNewColumn(newKanbanColumn);
             return "ok";
@@ -111,7 +113,6 @@ public class TaskManagementController {
 
     @GetMapping("/column")
     public ResponseEntity<ResponseObject> getColumn(@RequestParam int boardId) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success", "retrieved",
@@ -127,8 +128,9 @@ public class TaskManagementController {
     @ResponseBody
     public Map<Integer, ColumnData> kanbanData(@RequestParam("boardId") int boardId) {
         HashMap<Integer, ColumnData> result = new HashMap<>();
-
         try {
+            //if feature is active
+            isFeatureActive();
             //get all column in the table
             List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
             for (KanbanColumn k : kbList) {
@@ -144,7 +146,8 @@ public class TaskManagementController {
             }
             return result;
         } catch (Exception e) {
-            return null;
+            logger.warn(e.getMessage());
+            return Collections.emptyMap();
         }
     }
 
@@ -158,6 +161,8 @@ public class TaskManagementController {
             List<BoardLabel> cardLabels;
             List<CardLabel> updated = new ArrayList<>();
             int tempPosition;
+            //if feature active
+            isFeatureActive();
             // search data for each column
             for (Map.Entry<String, ColumnData> col : boardData.entrySet()) {
                 tempPosition = 1;
@@ -201,6 +206,30 @@ public class TaskManagementController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     new ResponseObject(FAILMSG, "account fail to connect: " + e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/notes")
+    public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
+        try {
+            Note updatedNote = noteService.updateNote(note);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(SUCCESSMSG, "Note updated!", updatedNote));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject(FAILMSG, "Failed to update note: " + e.getMessage(), null));
+        }
+    }
+
+    @Transactional
+    @DeleteMapping("/notes")
+    public ResponseEntity<ResponseObject> deleteNoteById(@RequestParam int id) {
+        try {
+            noteService.removeNoteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Delete card: " + id, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseObject(FAILMSG, "Cannot delete card: " + id + ", reason: " + e.getMessage(), null));
         }
     }
 

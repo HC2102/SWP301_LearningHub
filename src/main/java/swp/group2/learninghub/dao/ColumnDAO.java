@@ -10,8 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ColumnDAO extends JpaRepository<KanbanColumn, Integer> {
-    @Query("select k from KanbanColumn k where k.boardId= :boardId")
-    public List<KanbanColumn> getByBoardId(int boardId);
     @Query("select k from KanbanColumn k where k.boardId= :boardId and k.isActive= true")
-    public List<KanbanColumn> getByBoardId2(int boardId);
+    public List<KanbanColumn> getByBoardId(int boardId);
 }
