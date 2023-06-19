@@ -110,6 +110,26 @@ public class TaskManagementController {
             return e.getMessage();
         }
     }
+    @DeleteMapping("/column")
+    public ResponseEntity<ResponseObject> archiveColumnById(@RequestParam("id") int id){
+        try{
+            KanbanColumn target = columnService.getColumnById(id);
+            if(target != null){
+                target.setActive(false);
+                //update status
+                target = columnService.updateColumn(target);
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new ResponseObject(SUCCESSMSG,"update successfully",target)
+                );
+            }else{
+                throw new Exception("target is null");
+            }
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject(FAILMSG,e.getMessage(),null)
+            );
+        }
+    }
 
     @GetMapping("/column")
     public ResponseEntity<ResponseObject> getColumn(@RequestParam int boardId) {
