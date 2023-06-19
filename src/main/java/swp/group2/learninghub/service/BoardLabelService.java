@@ -8,6 +8,8 @@ public interface BoardLabelService {
     BoardLabel createLabel(BoardLabel label);
     BoardLabel updateLabel(BoardLabel label);
     void deleteLabel(int id);
-    void addCoreLabelsToBoardLabels();
+    List<BoardLabel> getAllLabelsByCardId(int cardId);
+    void addLabelToCard(int cardId, int labelId);
+    void removeLabelFromCard(int cardId, int labelId);
 
 }
