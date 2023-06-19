@@ -9,24 +9,38 @@ import swp.group2.learninghub.model.BoardLabel;
 import swp.group2.learninghub.model.Card;
 import swp.group2.learninghub.model.CardLabel;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.List;
+
+
 @Service
-public class CardLabelServiceImpl implements CardLabelService{
-    @Autowired
-    public CardLabelDAO cardLabelDAO;
+public class CardLabelServiceImpl implements CardLabelService {
+    private final CardLabelDAO cardLabelDAO;
+
+//    @Autowired
+//
+//    public CardLabelDAO cardLabelDAO;
     @Autowired
     public BoardLabelDAO boardLabelDAO;
     @Autowired
     public CardDAO cardDAO;
+
+    public CardLabelServiceImpl(CardLabelDAO cardLabelDAO) {
+        this.cardLabelDAO = cardLabelDAO;
+    }
+
+
     @Override
     public void addLabelToCard(CardLabel cardLabel) {
         cardLabelDAO.save(cardLabel);
     }
 
     @Override
+
     public ArrayList<BoardLabel> findLabelsInCard(int cardId) throws Exception {
         List<CardLabel> clList = cardLabelDAO.findAllByCardId(cardId);
         ArrayList<BoardLabel> labelList = new ArrayList<>();
@@ -62,4 +76,9 @@ public class CardLabelServiceImpl implements CardLabelService{
         //add new label information to this card
         cardLabelDAO.saveAll(updated);
     }
-}
+    public void removeLabelFromCard(int cardId, int labelId) {
+        cardLabelDAO.deleteByCardIdAndLabelId(cardId, labelId);
+    }
+
+    }
+
