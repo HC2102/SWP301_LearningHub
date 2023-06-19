@@ -3,8 +3,10 @@ package swp.group2.learninghub.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.BoardLabelDAO;
+import swp.group2.learninghub.dao.CoreLabelDAO;
 import swp.group2.learninghub.model.BoardLabel;
-import swp.group2.learninghub.model.Card;
+import swp.group2.learninghub.model.Board;
+import swp.group2.learninghub.model.CoreLabel;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +14,14 @@ import java.util.Optional;
 @Service
 public class BoardLabelServiceImpl implements BoardLabelService {
 
-    @Autowired
-    private BoardLabelDAO boardLabelDAO;
+    private final CoreLabelDAO coreLabelDAO;
+    private final BoardLabelDAO boardLabelDAO;
 
+    @Autowired
+    public BoardLabelServiceImpl(BoardLabelDAO boardLabelDAO, CoreLabelDAO coreLabelDAO) {
+        this.boardLabelDAO = boardLabelDAO;
+        this.coreLabelDAO = coreLabelDAO;
+    }
 
     @Override
     public List<BoardLabel> getAllLabelsByBoardId(int boardId) {
@@ -25,7 +32,10 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     @Override
     public BoardLabel getLabelById(int id) {
         Optional<BoardLabel> label = boardLabelDAO.findById(id);
-        return label.orElse(null);
+        if (label.isPresent()) {
+            return label.get();
+        }
+        return null;
     }
     @Override
     public BoardLabel createLabel(BoardLabel label) {
@@ -41,30 +51,19 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     public void deleteLabel(int id) {
         boardLabelDAO.deleteById(id);
     }
-    @Override
-    public List<BoardLabel> getAllLabelsByCardId(int cardId) {
-//        return boardLabelDAO.findAllByCardId(cardId);
-        return null;
-    }
-    @Override
-    public void addLabelToCard(int cardId, int labelId) {
-//        BoardLabel card = boardLabelDAO.findById(cardId).orElse(null);
-//        BoardLabel label = boardLabelDAO.findById(labelId).orElse(null);
-//        if (card != null && label != null) {
-//            card.boardLabelDAO(label);
-//            boardLabelDAO.save(card);
-//        }
-    }
 
     @Override
-    public void removeLabelFromCard(int cardId, int labelId) {
-//        BoardLabel card = cardDAO.findById(cardId).orElse(null);
-//        BoardLabel label = boardLabelDAO.findById(labelId).orElse(null);
-//        if (card != null && label != null) {
-//            card.removeLabel(label);
-//            cardDAO.save(card);
-//        }
-    }
+    public void addCoreLabelsToBoardLabels() {
+        List<CoreLabel> coreLabels = coreLabelDAO.findAll();
 
+        for (CoreLabel coreLabel : coreLabels) {
+            BoardLabel boardLabel = new BoardLabel();
+            boardLabel.setBoardId(coreLabel.getId()); // Set the board ID to the core label ID
+            boardLabel.setName(coreLabel.getName());
+            boardLabel.setColor(coreLabel.getColor());
+
+            boardLabelDAO.save(boardLabel);
+        }
+    }
 }
 
