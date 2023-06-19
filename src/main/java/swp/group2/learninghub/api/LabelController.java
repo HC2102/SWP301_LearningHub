@@ -15,7 +15,6 @@ import swp.group2.learninghub.service.CoreLabelsService;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/labels")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -34,6 +33,7 @@ public class LabelController {
         List<CoreLabel> labels = coreLabelService.getAllLabels();
         return new ResponseEntity<>(labels, HttpStatus.OK);
     }
+//err
     @GetMapping("/getLabelById")
     public ResponseEntity<CoreLabel> getLabelById(@RequestParam("id") int id) {
         try {
