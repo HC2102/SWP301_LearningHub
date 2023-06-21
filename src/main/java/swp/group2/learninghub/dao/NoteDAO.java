@@ -12,10 +12,8 @@ import java.util.List;
 public interface NoteDAO extends JpaRepository<Note,Integer> {
     @Query("SELECT n FROM Note n where n.userId=:email")
     public List<Note> showUserNotesByEmail(@Param("email") String email);
-
-    public void removeNoteById(int id);
-
-    public Note getNoteById(int id);
+    @Query("select n from Note n where n.userId=:email AND n.isActive=true AND n.id=:noteId")
+    public Note getNoteById(@Param("noteId") int noteId, @Param("email") String email);
     @Query("select max(n.id) from Note n where n.userId =:email")
     public int getMaxNoteIdByUsername(@Param("email") String email);
 }
