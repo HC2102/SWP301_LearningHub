@@ -23,6 +23,7 @@ public class Board {
     private int noteId;
     private boolean isActive;
 
+
     public Board(String name, Date createdDate, int noteId, boolean isActive) {
         this.name = name;
         this.createdDate = createdDate;

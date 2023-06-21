@@ -60,9 +60,14 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
-            Note note = noteService.createNote(newNote);
-            boardService.createBoard(new Board(note.getTitle(), note.getCreatedDate(), note.getId(), true));
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create note successfully!", note));
+            Note target = noteService.createNote(newNote);
+            logger.info(target.toString());
+            Board newBoard = new Board( newNote.getTitle(), newNote.getCreatedDate(),
+                    noteService.getMaxBoardIdByEmail(target.getUserId()), true);
+            logger.info(newBoard.toString());
+            boardService.createBoard(newBoard);
+            target.setId(noteService.getMaxBoardIdByEmail(target.getUserId()));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create note successfully!", newNote));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     new ResponseObject(FAILMSG, "Create note failed, reason: " + e.getMessage(), null));
@@ -110,23 +115,24 @@ public class TaskManagementController {
             return e.getMessage();
         }
     }
+
     @DeleteMapping("/column")
-    public ResponseEntity<ResponseObject> archiveColumnById(@RequestParam("id") int id){
-        try{
+    public ResponseEntity<ResponseObject> archiveColumnById(@RequestParam("id") int id) {
+        try {
             KanbanColumn target = columnService.getColumnById(id);
-            if(target != null){
+            if (target != null) {
                 target.setActive(false);
                 //update status
                 target = columnService.updateColumn(target);
                 return ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject(SUCCESSMSG,"update successfully",target)
+                        new ResponseObject(SUCCESSMSG, "update successfully", target)
                 );
-            }else{
+            } else {
                 throw new Exception("target is null");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ResponseObject(FAILMSG,e.getMessage(),null)
+                    new ResponseObject(FAILMSG, e.getMessage(), null)
             );
         }
     }
@@ -250,6 +256,16 @@ public class TaskManagementController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Delete card: " + id, null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseObject(FAILMSG, "Cannot delete card: " + id + ", reason: " + e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/getNoteById")
+    public ResponseEntity<ResponseObject> getNoteById(@RequestParam int noteId) {
+        try {
+            Note note = noteService.getNoteById(noteId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Get note by id: " + noteId, note));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseObject(FAILMSG, "Cannot get note id = : " + noteId + ", reason: " + e.getMessage(), null));
         }
     }
 

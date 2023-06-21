@@ -11,4 +11,8 @@ public interface NoteService {
     public Note updateNote(Note note);
 
     public void removeNoteById(int id);
+
+    public Note getNoteById(int noteId);
+
+    public int getMaxBoardIdByEmail(String email);
 }
