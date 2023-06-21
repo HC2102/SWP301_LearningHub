@@ -271,6 +271,7 @@ public class TaskManagementController {
     private User checkAccountAndActive() {
         Feature feature = featureService.findFeatureById(FEATURE_ID);
         User userSession = (User) session.getAttribute("user");
+        logger.info(userSession.toString());
         if (userSession == null) {
             throw new IllegalArgumentException("can not find user information for this feature");
         }

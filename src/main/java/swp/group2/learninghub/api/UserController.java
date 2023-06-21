@@ -7,7 +7,6 @@ import swp.group2.learninghub.model.ResponseObject;
 import swp.group2.learninghub.model.User;
 import swp.group2.learninghub.model.sdi.ClientSdi;
 import swp.group2.learninghub.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
