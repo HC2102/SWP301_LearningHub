@@ -18,7 +18,7 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public Note createNote(Note note) {
         note.setCreatedDate(Date.valueOf(LocalDate.now()));
-        return noteDAO.save(note);
+        return  noteDAO.save(note);
     }
     @Override
     public Note updateNote(Note note) {
@@ -44,5 +44,12 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public void removeNoteById(int id) {
         noteDAO.removeNoteById(id);
+    }
+
+    public Note getNoteById(int noteId) {return noteDAO.getNoteById(noteId);}
+
+    @Override
+    public int getMaxBoardIdByEmail(String email) {
+        return noteDAO.getMaxNoteIdByUsername(email);
     }
 }
