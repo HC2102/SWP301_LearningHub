@@ -156,7 +156,7 @@ public class TaskManagementController {
         HashMap<Integer, ColumnData> result = new HashMap<>();
         try {
             //if feature is active
-            isFeatureActive();
+            checkAccountAndActive();
             //get all column in the table
             List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
             for (KanbanColumn k : kbList) {
@@ -188,7 +188,7 @@ public class TaskManagementController {
             List<CardLabel> updated = new ArrayList<>();
             int tempPosition;
             //if feature active
-            isFeatureActive();
+            checkAccountAndActive();
             // search data for each column
             for (Map.Entry<String, ColumnData> col : boardData.entrySet()) {
                 tempPosition = 1;
@@ -220,33 +220,17 @@ public class TaskManagementController {
     @GetMapping("/notes")
     public ResponseEntity<ResponseObject> showAllNotes() {
         try {
-            User userSession = (User) session.getAttribute("user");
-            if (userSession == null) {
-                throw new IllegalArgumentException("can not find user information for this feature");
-            }
-            isFeatureActive();
+            User u=checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve notes of " +
-                    userSession.getEmail(),
-                    noteService.showUserNotesByEmail(userSession.getEmail())));
+                    u.getEmail(),
+                    noteService.showUserNotesByEmail(u.getEmail())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject(FAILMSG, "account fail to connect: " + e.getMessage(), null));
+                    new ResponseObject(FAILMSG,  e.getMessage(), null));
         }
     }
 
-    @PutMapping("/notes")
-    public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
-        try {
-            Note updatedNote = noteService.updateNote(note);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResponseObject(SUCCESSMSG, "Note updated!", updatedNote));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseObject(FAILMSG, "Failed to update note: " + e.getMessage(), null));
-        }
-    }
 
     @Transactional
     @DeleteMapping("/notes")
@@ -259,20 +243,41 @@ public class TaskManagementController {
         }
     }
 
-    @GetMapping("/getNoteById")
-    public ResponseEntity<ResponseObject> getNoteById(@RequestParam int noteId) {
+    @GetMapping()
+    public ResponseEntity<ResponseObject> findNoteById(@RequestParam("id") int id) {
         try {
-            Note note = noteService.getNoteById(noteId);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Get note by id: " + noteId, note));
+            User u=checkAccountAndActive();
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG, "retrieve note of",
+                    noteService.findNoteById(id)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseObject(FAILMSG, "Cannot get note id = : " + noteId + ", reason: " + e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, e.getMessage(), null));
+        }
+    }
+    @PutMapping()
+    public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
+        try {
+            User u=checkAccountAndActive();
+            noteService.updateNote(note);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG, "oke",null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, e.getMessage(), null));
         }
     }
 
-    private void isFeatureActive() {
+    private User checkAccountAndActive() {
         Feature feature = featureService.findFeatureById(FEATURE_ID);
+        User userSession = (User) session.getAttribute("user");
+        if (userSession == null) {
+            throw new IllegalArgumentException("can not find user information for this feature");
+        }
         if (!feature.isActive()) {
             throw new IllegalArgumentException("Feature is disable: " + feature.getDescription());
         }
+        return userSession;
+
     }
 }
