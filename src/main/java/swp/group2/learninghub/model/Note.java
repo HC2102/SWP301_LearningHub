@@ -22,6 +22,7 @@ public class Note {
     private String userId;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
+    private boolean isActive;
 
     public Date getCreatedDate() {
         return createdDate;
