@@ -60,9 +60,10 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
+            newNote.setActive(true);
             Note target = noteService.createNote(newNote);
             logger.info(target.toString());
-            Board newBoard = new Board( newNote.getTitle(), newNote.getCreatedDate(),
+            Board newBoard = new Board(newNote.getTitle(), newNote.getCreatedDate(),
                     noteService.getMaxBoardIdByEmail(target.getUserId()), true);
             logger.info(newBoard.toString());
             boardService.createBoard(newBoard);
@@ -220,33 +221,33 @@ public class TaskManagementController {
     @GetMapping("/notes")
     public ResponseEntity<ResponseObject> showAllNotes() {
         try {
-            User u=checkAccountAndActive();
+            User u = checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve notes of " +
                     u.getEmail(),
                     noteService.showUserNotesByEmail(u.getEmail())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject(FAILMSG,  e.getMessage(), null));
+                    new ResponseObject(FAILMSG, e.getMessage(), null));
         }
     }
 
-
-    @Transactional
     @DeleteMapping("/notes")
-    public ResponseEntity<ResponseObject> deleteNoteById(@RequestParam int id) {
+    public ResponseEntity<ResponseObject> archiveNoteById(@RequestParam int noteId) {
         try {
-            noteService.removeNoteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Delete card: " + id, null));
+            Note note = noteService.archiveNoteById(noteId);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(SUCCESSMSG, "Archive note successfully!", note));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseObject(FAILMSG, "Cannot delete card: " + id + ", reason: " + e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseObject(FAILMSG, "Failed to archive note!", e.getMessage()));
         }
     }
 
     @GetMapping()
     public ResponseEntity<ResponseObject> findNoteById(@RequestParam("id") int id) {
         try {
-            User u=checkAccountAndActive();
+            User u = checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve note of",
                     noteService.findNoteById(id)));
@@ -255,13 +256,14 @@ public class TaskManagementController {
                     new ResponseObject(FAILMSG, e.getMessage(), null));
         }
     }
+
     @PutMapping()
     public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
         try {
-            User u=checkAccountAndActive();
+            User u = checkAccountAndActive();
             noteService.updateNote(note);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    SUCCESSMSG, "oke",null));
+                    SUCCESSMSG, "oke", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     new ResponseObject(FAILMSG, e.getMessage(), null));

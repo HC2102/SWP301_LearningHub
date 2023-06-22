@@ -1,9 +1,11 @@
 package swp.group2.learninghub.service;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.NoteDAO;
 import swp.group2.learninghub.model.Note;
+import swp.group2.learninghub.model.User;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -14,6 +16,8 @@ import java.util.Optional;
 public class NoteServiceImpl implements NoteService {
     @Autowired
     public NoteDAO noteDAO;
+    @Autowired
+    HttpSession session;
 
     @Override
     public Note createNote(Note note) {
@@ -48,11 +52,21 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void removeNoteById(int id) {
-        noteDAO.removeNoteById(id);
+    public Note archiveNoteById(int noteId) {
+        User sessionUser = (User) session.getAttribute("user");
+        Note target = noteDAO.getNoteById(noteId, sessionUser.getEmail());
+        if (target == null) {
+            throw new IllegalArgumentException("Note not found!");
+        } else {
+            target.setActive(false);
+            try {
+                noteDAO.save(target);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Unable to archive note!");
+            }
+        }
+        return target;
     }
-
-    public Note getNoteById(int noteId) {return noteDAO.getNoteById(noteId);}
 
     @Override
     public int getMaxBoardIdByEmail(String email) {

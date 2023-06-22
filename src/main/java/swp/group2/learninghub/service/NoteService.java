@@ -8,10 +8,7 @@ public interface NoteService {
     public Note createNote(Note note);
     public List<Note> showUserNotesByEmail(String email);
 
-
-    public void removeNoteById(int id);
-
-    public Note getNoteById(int noteId);
+    public Note archiveNoteById(int noteId);
 
     public int getMaxBoardIdByEmail(String email);
 
