@@ -29,6 +29,11 @@ public class CardLabelServiceImpl implements CardLabelService {
     @Autowired
     public CardDAO cardDAO;
 
+    @Override
+    public void deleteAllLabelByCardId(int cardId) {
+        cardLabelDAO.deleteAllByCardId(cardId);
+    }
+
     public CardLabelServiceImpl(CardLabelDAO cardLabelDAO) {
         this.cardLabelDAO = cardLabelDAO;
     }
@@ -40,7 +45,6 @@ public class CardLabelServiceImpl implements CardLabelService {
     }
 
     @Override
-
     public ArrayList<BoardLabel> findLabelsInCard(int cardId) throws Exception {
         List<CardLabel> clList = cardLabelDAO.findAllByCardId(cardId);
         ArrayList<BoardLabel> labelList = new ArrayList<>();

@@ -11,5 +11,9 @@ public interface CardService {
 
     public Card getById(int id);
 
-    public void updateCard(Card newCard);
+    public void updateCard(Card newCard) throws Exception;
+    public void deleteCardById(int cardId);
+
+    public void addCard(Card newCard);
+    public int getMaxCardId(int columnId);
 }

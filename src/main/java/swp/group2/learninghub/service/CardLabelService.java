@@ -15,5 +15,7 @@ public interface CardLabelService {
     public void updateCardLabelData(int cardId, List<CardLabel> updated);
     public void removeLabelFromCard(int cardId, int labelId);
 
+    public void deleteAllLabelByCardId(int cardId);
+
 
 }

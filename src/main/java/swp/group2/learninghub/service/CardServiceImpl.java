@@ -14,8 +14,18 @@ public class CardServiceImpl implements CardService {
     public CardDAO cardDAO;
 
     @Override
+    public int getMaxCardId(int columnId) {
+        return cardDAO.getMaxCardIdByColumn(columnId);
+    }
+
+    @Override
     public List<Card> getCardsByLabelId(int id) {
         return null;
+    }
+
+    @Override
+    public void deleteCardById(int cardId) {
+        cardDAO.deleteById(cardId);
     }
 
     @Override
@@ -27,8 +37,18 @@ public class CardServiceImpl implements CardService {
             return null;
         }
     }
-    public void updateCard(Card newCard){
+
+    @Override
+    public void addCard(Card newCard) {
+        cardDAO.save(newCard);
+    }
+
+    public void updateCard(Card newCard) throws Exception {
         try{
+            Optional<Card> card = cardDAO.findById(newCard.getId());
+            if(card.isEmpty()){
+                throw new Exception("card Id is not valid");
+            }
             cardDAO.save(newCard);
         }catch(Exception e){
             throw e;

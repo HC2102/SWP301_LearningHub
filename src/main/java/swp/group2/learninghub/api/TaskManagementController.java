@@ -5,20 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.QueryCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import swp.group2.learninghub.model.*;
 import swp.group2.learninghub.model.clientModel.CardData;
+import swp.group2.learninghub.model.clientModel.CardSaveData;
 import swp.group2.learninghub.model.clientModel.ColumnData;
 import swp.group2.learninghub.service.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 @RestController
@@ -54,6 +52,53 @@ public class TaskManagementController {
     @GetMapping("/cardlabel")
     public void mapping(@RequestBody CardLabel cardLabel) {
         cardLabelService.addLabelToCard(cardLabel);
+    }
+
+    @PostMapping("/card")
+    public ResponseEntity<ResponseObject> addCard(@RequestBody CardSaveData data){
+        try {
+            //get card data
+            cardService.addCard(data.getCard());
+            //get card id
+            int cardId = cardService.getMaxCardId(data.getCard().getColumnId());
+//            add label to card
+            for(int label : data.getLabels()){
+                cardLabelService.addLabelToCard(new CardLabel(label,cardId));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG,"Success ", data.toString()));
+        }catch (ExceptionInInitializerError e){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    FAILMSG,"Fail to add card ", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/card")
+    public ResponseEntity<ResponseObject> updateCard(@RequestBody Card updatedCard){
+        try{
+            cardService.updateCard(updatedCard);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG,"Success updating card data at "+updatedCard.getId(), updatedCard.toString()));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    FAILMSG,"Fail to update card ", e.getMessage()));
+        }
+    }
+    @Transactional
+    @DeleteMapping("/card")
+    public ResponseEntity<ResponseObject> deleteCard(@RequestParam("id") int cardId){
+        try{
+            //delete all label fron card (avoid fk constrain)
+            cardLabelService.deleteAllLabelByCardId(cardId);
+            //then delete the card
+            cardService.deleteCardById(cardId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG,"Success delete card id "+cardId, null));
+
+        }catch(QueryCreationException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject(
+                    FAILMSG,"Fail to delete card id "+cardId, e.getMessage()));
+        }
     }
 
     @PostMapping("/notes")
