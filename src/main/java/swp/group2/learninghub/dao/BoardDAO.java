@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 import swp.group2.learninghub.model.Board;
 @Repository
 public interface BoardDAO extends JpaRepository<Board,Integer> {
+    public Board findBoardByNoteId(int noteId);
 }

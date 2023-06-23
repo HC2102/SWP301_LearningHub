@@ -4,4 +4,6 @@ import swp.group2.learninghub.model.Board;
 
 public interface BoardService {
     public Board createBoard(Board board);
+
+    public Board updateBoard(Board board);
 }

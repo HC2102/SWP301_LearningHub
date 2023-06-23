@@ -55,49 +55,50 @@ public class TaskManagementController {
     }
 
     @PostMapping("/card")
-    public ResponseEntity<ResponseObject> addCard(@RequestBody CardSaveData data){
+    public ResponseEntity<ResponseObject> addCard(@RequestBody CardSaveData data) {
         try {
             //get card data
             cardService.addCard(data.getCard());
             //get card id
             int cardId = cardService.getMaxCardId(data.getCard().getColumnId());
 //            add label to card
-            for(int label : data.getLabels()){
-                cardLabelService.addLabelToCard(new CardLabel(label,cardId));
+            for (int label : data.getLabels()) {
+                cardLabelService.addLabelToCard(new CardLabel(label, cardId));
             }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    SUCCESSMSG,"Success ", data.toString()));
-        }catch (ExceptionInInitializerError e){
+                    SUCCESSMSG, "Success ", data.toString()));
+        } catch (ExceptionInInitializerError e) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    FAILMSG,"Fail to add card ", e.getMessage()));
+                    FAILMSG, "Fail to add card ", e.getMessage()));
         }
     }
 
     @PutMapping("/card")
-    public ResponseEntity<ResponseObject> updateCard(@RequestBody Card updatedCard){
-        try{
+    public ResponseEntity<ResponseObject> updateCard(@RequestBody Card updatedCard) {
+        try {
             cardService.updateCard(updatedCard);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    SUCCESSMSG,"Success updating card data at "+updatedCard.getId(), updatedCard.toString()));
-        }catch(Exception e){
+                    SUCCESSMSG, "Success updating card data at " + updatedCard.getId(), updatedCard.toString()));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    FAILMSG,"Fail to update card ", e.getMessage()));
+                    FAILMSG, "Fail to update card ", e.getMessage()));
         }
     }
+
     @Transactional
     @DeleteMapping("/card")
-    public ResponseEntity<ResponseObject> deleteCard(@RequestParam("id") int cardId){
-        try{
+    public ResponseEntity<ResponseObject> deleteCard(@RequestParam("id") int cardId) {
+        try {
             //delete all label fron card (avoid fk constrain)
             cardLabelService.deleteAllLabelByCardId(cardId);
             //then delete the card
             cardService.deleteCardById(cardId);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    SUCCESSMSG,"Success delete card id "+cardId, null));
+                    SUCCESSMSG, "Success delete card id " + cardId, null));
 
-        }catch(QueryCreationException e){
+        } catch (QueryCreationException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject(
-                    FAILMSG,"Fail to delete card id "+cardId, e.getMessage()));
+                    FAILMSG, "Fail to delete card id " + cardId, e.getMessage()));
         }
     }
 
@@ -304,11 +305,16 @@ public class TaskManagementController {
 
     @PutMapping()
     public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
+        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             User u = checkAccountAndActive();
-            noteService.updateNote(note);
+            Note updateNote = noteService.updateNote(note);
+            Board updateBoard = new Board(note.getTitle(), note.getCreatedDate(),
+                    noteService.findNoteById(updateNote.getId()).getId(), true);
+            boardService.updateBoard(updateBoard);
+            updateNote.setId(noteService.getMaxBoardIdByEmail(updateNote.getUserId()));
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    SUCCESSMSG, "oke", null));
+                    SUCCESSMSG, "Update note successfully!", updateNote));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     new ResponseObject(FAILMSG, e.getMessage(), null));
