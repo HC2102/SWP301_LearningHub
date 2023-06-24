@@ -290,6 +290,19 @@ public class TaskManagementController {
         }
     }
 
+    @GetMapping("/board")
+    public ResponseEntity<ResponseObject> findBoardByNoteId(@RequestParam int noteId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject(SUCCESSMSG, "Find board by noteId successfully", boardService.findBoardByNoteId(noteId)
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResponseObject(FAILMSG, "Board not found!", e.getMessage())
+            );
+        }
+    }
+
     @GetMapping()
     public ResponseEntity<ResponseObject> findNoteById(@RequestParam("id") int id) {
         try {

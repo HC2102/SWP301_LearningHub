@@ -32,4 +32,9 @@ public class BoardServiceImpl implements BoardService {
         boardDAO.save(newBoard);
         return newBoard;
     }
+
+    @Override
+    public Board findBoardByNoteId(int noteId) {
+        return boardDAO.findBoardByNoteId(noteId);
+    }
 }
