@@ -22,28 +22,30 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public Note createNote(Note note) {
         note.setCreatedDate(Date.valueOf(LocalDate.now()));
-        return  noteDAO.save(note);
+        return noteDAO.save(note);
     }
+
     @Override
     public Note findNoteById(int id) {
-        Optional<Note> n=noteDAO.findById(id);
+        Optional<Note> n = noteDAO.findById(id);
         if (n.isEmpty()) {
             return null;
         }
-        Note note=n.get();
+        Note note = n.get();
         return note;
     }
 
     @Override
-    public void updateNote(Note note) {
-        Optional<Note> n=noteDAO.findById(note.getId());
-        if(n.isEmpty()) {
+    public Note updateNote(Note note) {
+        Optional<Note> n = noteDAO.findById(note.getId());
+        if (n.isEmpty()) {
             throw new IllegalArgumentException("Not found note");
         }
-        Note newNote=n.get();
-        newNote.setDescription(note.getDescription());
+        Note newNote = n.get();
         newNote.setTitle(note.getTitle());
+        newNote.setDescription(note.getDescription());
         noteDAO.save(newNote);
+        return newNote;
     }
 
     @Override
