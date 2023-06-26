@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class FeatureController {
     // variable and constructor section
     @Autowired
-    HttpSession session;
+    HttpSession session;        
     @Autowired
     private final FeatureService service;
 

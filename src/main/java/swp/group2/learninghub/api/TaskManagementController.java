@@ -57,13 +57,17 @@ public class TaskManagementController {
     @PostMapping("/card")
     public ResponseEntity<ResponseObject> addCard(@RequestBody CardSaveData data) {
         try {
+            logger.info(data.toString());
+            logger.info(data.getLabels().toString());
             //get card data
             cardService.addCard(data.getCard());
             //get card id
             int cardId = cardService.getMaxCardId(data.getCard().getColumnId());
 //            add label to card
-            for (int label : data.getLabels()) {
-                cardLabelService.addLabelToCard(new CardLabel(label, cardId));
+            if(!data.getLabels().isEmpty()){
+                for (int label : data.getLabels()) {
+                    cardLabelService.addLabelToCard(new CardLabel(label, cardId));
+                }
             }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "Success ", data.toString()));
