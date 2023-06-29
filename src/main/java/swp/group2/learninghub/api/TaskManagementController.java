@@ -40,6 +40,8 @@ public class TaskManagementController {
     HttpSession session;
     @Autowired
     private FeatureService featureService;
+    @Autowired
+    private  BoardLabelService boardLabelService;
     private static final int FEATURE_ID = 2;
     private static final String SUCCESSMSG = "Success";
     private static final String FAILMSG = "Fail";
@@ -106,6 +108,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
+            User user = (User) session.getAttribute("user");
             newNote.setActive(true);
             Note target = noteService.createNote(newNote);
             logger.info(target.toString());
@@ -113,7 +116,10 @@ public class TaskManagementController {
                     noteService.getMaxBoardIdByEmail(target.getUserId()), true);
             logger.info(newBoard.toString());
             boardService.createBoard(newBoard);
+            boardLabelService.addCoreLabelsToBoardLabels("truongpdhe170417@fpt.edu.vn");
             target.setId(noteService.getMaxBoardIdByEmail(target.getUserId()));
+//            int i = target.getId();
+//            boardLabelService.addCoreLabelsToBoardLabels((i-4));
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create note successfully!", newNote));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
@@ -146,6 +152,7 @@ public class TaskManagementController {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             Board board = boardService.createBoard(newBoard);
+   //         boardLabelService.addCoreLabelsToBoardLabels();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create board successfully!", board));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(

@@ -3,6 +3,7 @@ package swp.group2.learninghub.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.BoardDAO;
+import swp.group2.learninghub.dao.NoteDAO;
 import swp.group2.learninghub.model.Board;
 import swp.group2.learninghub.model.Note;
 
@@ -14,10 +15,15 @@ import java.util.Optional;
 public class BoardServiceImpl implements BoardService {
     @Autowired
     public BoardDAO boardDAO;
+//    @Autowired
+//    public BoardLabelService boardLabelService;
+    @Autowired
+    public NoteDAO noteDAO;
 
     @Override
     public Board createBoard(Board board) {
         board.setCreatedDate(Date.valueOf(LocalDate.now()));
+//        boardLabelService.addCoreLabelsToBoardLabels(board.getId());
         return boardDAO.save(board);
     }
 
@@ -37,4 +43,12 @@ public class BoardServiceImpl implements BoardService {
     public Board findBoardByNoteId(int noteId) {
         return boardDAO.findBoardByNoteId(noteId);
     }
+    @Override
+    public Board findBoard(String name) {
+        return boardDAO.findByName(name);
+    }
+
+
 }
+
+

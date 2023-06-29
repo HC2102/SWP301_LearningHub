@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.BoardLabelDAO;
 import swp.group2.learninghub.dao.CoreLabelDAO;
+import swp.group2.learninghub.dao.NoteDAO;
 import swp.group2.learninghub.model.BoardLabel;
 import swp.group2.learninghub.model.Board;
 import swp.group2.learninghub.model.CoreLabel;
@@ -17,10 +18,13 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     private final CoreLabelDAO coreLabelDAO;
     private final BoardLabelDAO boardLabelDAO;
 
+
+    private final NoteDAO noteDAO;
     @Autowired
-    public BoardLabelServiceImpl(BoardLabelDAO boardLabelDAO, CoreLabelDAO coreLabelDAO) {
-        this.boardLabelDAO = boardLabelDAO;
+    public BoardLabelServiceImpl(CoreLabelDAO coreLabelDAO, BoardLabelDAO boardLabelDAO, NoteDAO noteDAO) {
         this.coreLabelDAO = coreLabelDAO;
+        this.boardLabelDAO = boardLabelDAO;
+        this.noteDAO = noteDAO;
     }
 
     @Override
@@ -53,12 +57,12 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     }
 
     @Override
-    public void addCoreLabelsToBoardLabels() {
+    public void addCoreLabelsToBoardLabels( String userId) {
         List<CoreLabel> coreLabels = coreLabelDAO.findAll();
-
+        int boardId = noteDAO.getMaxNoteIdByUsername(userId);
         for (CoreLabel coreLabel : coreLabels) {
             BoardLabel boardLabel = new BoardLabel();
-            boardLabel.setBoardId(coreLabel.getId()); // Set the board ID to the core label ID
+            boardLabel.setBoardId(boardId ); // Set the board ID to the core label ID
             boardLabel.setName(coreLabel.getName());
             boardLabel.setColor(coreLabel.getColor());
 
