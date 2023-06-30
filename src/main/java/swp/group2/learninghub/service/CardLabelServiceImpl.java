@@ -34,6 +34,15 @@ public class CardLabelServiceImpl implements CardLabelService {
         cardLabelDAO.deleteAllByCardId(cardId);
     }
 
+    @Override
+    public void removeAllLabelsFromAllCards(int labelID) {
+        List<CardLabel> cardLabels = cardLabelDAO.findAllByLabelId(labelID);
+
+        for (CardLabel cardLabel : cardLabels) {
+            cardLabelDAO.delete(cardLabel);
+        }
+    }
+
     public CardLabelServiceImpl(CardLabelDAO cardLabelDAO) {
         this.cardLabelDAO = cardLabelDAO;
     }
@@ -85,4 +94,6 @@ public class CardLabelServiceImpl implements CardLabelService {
     }
 
     }
+
+
 

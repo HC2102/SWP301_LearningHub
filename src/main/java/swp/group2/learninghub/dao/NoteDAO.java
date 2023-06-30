@@ -16,4 +16,5 @@ public interface NoteDAO extends JpaRepository<Note,Integer> {
     public Note getNoteById(@Param("noteId") int noteId, @Param("email") String email);
     @Query("select max(n.id) from Note n where n.userId =:email")
     public int getMaxNoteIdByUsername(@Param("email") String email);
+
 }
