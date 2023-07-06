@@ -124,12 +124,11 @@ public class LabelController {
 
     @PutMapping("/updateL")
     public ResponseEntity<CoreLabel> updateLabel(
-            @RequestParam("id") int id,
             @RequestBody CoreLabel label) {
         try {
-            CoreLabel existingLabel = coreLabelService.getLabelById(id);
+            CoreLabel existingLabel = coreLabelService.getLabelById(label.getId());
             if (existingLabel != null) {
-                label.setId(id);
+                label.setId(label.getId());
                 CoreLabel updatedLabel = coreLabelService.updateLabel(label);
                 return new ResponseEntity<>(updatedLabel, HttpStatus.OK);
             } else {

@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/v1/feature")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class FeatureController {
     // variable and constructor section
     @Autowired
@@ -29,13 +29,13 @@ public class FeatureController {
     @GetMapping("")
     public ResponseEntity<ResponseObject> showAll() {
         try {
-            User sessionUser = (User) session.getAttribute("user");
-            if (sessionUser == null) {
+//            User sessionUser = (User) session.getAttribute("user");
+//            if (sessionUser == null) {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",
                         "feature list", service.showAll()));
-            } else {
-                throw new IllegalArgumentException("User information for session not found");
-            }
+//            } else {
+//                throw new IllegalArgumentException("User information for session not found");
+//            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("Fail",
                     "Can not retrieve feature information", e.getMessage()));
