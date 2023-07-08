@@ -1,6 +1,7 @@
 package swp.group2.learninghub.api;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.transaction.annotation.Transactional;
 import swp.group2.learninghub.model.ChangePass;
 import swp.group2.learninghub.model.LoginRequest;
 import swp.group2.learninghub.model.ResponseObject;
@@ -37,11 +38,15 @@ public class UserController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<ResponseObject> deactivateUser(@RequestParam("email") String target) {
+    public ResponseEntity<ResponseObject> deactivateUser(@RequestParam("email") String target, @RequestParam("password") String password) {
         try {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             User sessionUser = (User) session.getAttribute("user"); /* Session user */
             if (sessionUser == null) {
                 throw new IllegalArgumentException("session user information not found");
+            }
+            if(!passwordEncoder.matches(password, sessionUser.getPassword().trim())){
+                throw new IllegalArgumentException("password not match");
             }
             if (sessionUser.getEmail().compareToIgnoreCase(target) != 0
                     && sessionUser.getRoleId().compareToIgnoreCase(ADMIN_ROLE) != 0) {
@@ -65,6 +70,7 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<ResponseObject> getUserProfile(@RequestParam("email") String email) {
         try {
+
             User sessionUser = (User) session.getAttribute("user"); /* Session user */
             if (sessionUser.getEmail().compareToIgnoreCase(email) != 0
                     && sessionUser.getRoleId().compareToIgnoreCase(ADMIN_ROLE) != 0) {
@@ -84,17 +90,19 @@ public class UserController {
                     new ResponseObject(FAILMSG, "Failed to retrieve user profile: " + e.getMessage(), null));
         }
     }
-
+    @Transactional
     @PutMapping("/profile")
     public ResponseEntity<ResponseObject> updateUserProfile(@RequestBody User updatedUser) {
         try {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             User sessionUser = (User) session.getAttribute("user"); /* Session user */
             /* check if updated user is match with session user or session user is admin */
             if (sessionUser.getEmail().compareToIgnoreCase(updatedUser.getEmail()) != 0
                     && sessionUser.getRoleId().compareToIgnoreCase(ADMIN_ROLE) != 0) {
                 throw new IllegalArgumentException(UNAUTHORIZED);
             }
-            userService.save(updatedUser);
+            userService.update(updatedUser);
+            session.setAttribute("user",updatedUser);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "update user profile successfully", updatedUser));
         } catch (Exception e) {
@@ -128,12 +136,15 @@ public class UserController {
             if (u1.isEmpty()) {
                 throw new IllegalArgumentException("can not find email");
             }
+            if (!u1.get(0).isActive()) {
+                throw new IllegalArgumentException("can not login because the account has been deactivated");
+            }
             if (passwordEncoder.matches(loginRequest.getPassword(), u1.get(0).getPassword().trim())) {
                 session.setAttribute("user", u1.get(0));
                 return ResponseEntity.status(HttpStatus.OK).body(
                         new ResponseObject(SUCCESSMSG, "Login Successful!", u1));
             }
-            throw new IllegalArgumentException("login failed");
+            throw new IllegalArgumentException("login failed due to password or email is invalid");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject(FAILMSG, "Email or PassWord invalid!",
@@ -162,12 +173,13 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    String changePass(@RequestBody ChangePass changePass) {
+    ResponseEntity<ResponseObject> changePass(@RequestBody ChangePass changePass) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         User u = (User) session.getAttribute("user");
         if (passwordEncoder.matches(changePass.getOldpass(), u.getPassword())) {
             if (changePass.getNewpass().trim().equals("") || changePass.getVerpass().trim().equals("")) {
-                return "verification password and new password are not blank";
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                        .body(new ResponseObject(FAILMSG, "verification password and new password must not be blank", null));
             } else if (changePass.getNewpass().trim().equals(changePass.getVerpass().trim())) {
                 User userUpdate = new User(u.getEmail(), u.getRealName(), u.getPhoneNum(), changePass.getNewpass(),
                         u.getRoleId(),
@@ -175,12 +187,15 @@ public class UserController {
                 userUpdate.setPassword(changePass.getNewpass());
                 userService.save(userUpdate);
                 session.setAttribute("user", userUpdate);
-                return "change password successful!";
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new ResponseObject(SUCCESSMSG, "change password successful!", userUpdate));
             } else {
-                return "verification password and new password are not the same";
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                        .body(new ResponseObject(FAILMSG, "verification password and new password are not the same", null));
             }
         } else {
-            return "Password not correct!";
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(new ResponseObject(FAILMSG, "Password not correct!", null));
         }
     }
 

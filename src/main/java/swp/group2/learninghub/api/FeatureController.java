@@ -29,13 +29,13 @@ public class FeatureController {
     @GetMapping("")
     public ResponseEntity<ResponseObject> showAll() {
         try {
-//            User sessionUser = (User) session.getAttribute("user");
-//            if (sessionUser == null) {
+            User sessionUser = (User) session.getAttribute("user");
+            if (sessionUser != null && sessionUser.getRoleId().compareToIgnoreCase("ADMIN")==0) {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",
                         "feature list", service.showAll()));
-//            } else {
-//                throw new IllegalArgumentException("User information for session not found");
-//            }
+            } else {
+                throw new IllegalArgumentException("User information for session not found");
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("Fail",
                     "Can not retrieve feature information", e.getMessage()));
@@ -47,7 +47,7 @@ public class FeatureController {
     ResponseEntity<ResponseObject> setActive(@RequestParam("id") int featureId, @RequestParam("mess") String message) {
         try {
             User sessionUser = (User) session.getAttribute("user");
-            if (sessionUser != null) {
+            if (sessionUser != null && sessionUser.getRoleId().compareToIgnoreCase("ADMIN")==0) {
                 if (sessionUser.getRoleId().compareToIgnoreCase("ADMIN") == 0) {
                     service.setActive(featureId, message);
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",

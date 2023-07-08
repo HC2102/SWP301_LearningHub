@@ -12,6 +12,8 @@ public interface UserService {
 
     void save(User newUser);
 
+    void update(User updatedUser);
+
     List<User> findByEmail(String name);
 
     public Boolean create(ClientSdi sdi);

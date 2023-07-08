@@ -27,6 +27,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void update(User updatedUser) {
+        userDAO.updateUser(updatedUser.getEmail(),updatedUser.getRealName(),updatedUser.getPhoneNum());
+    }
+
+    @Override
     public User register(User newUser) {
         LocalDateTime now = LocalDateTime.now();
         String emailRegex = "^(.+)@(\\S+)$";
