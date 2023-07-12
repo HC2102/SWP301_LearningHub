@@ -178,6 +178,10 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> archiveColumnById(@RequestParam("id") int id) {
         try {
             KanbanColumn target = columnService.getColumnById(id);
+            List<Card> cardInTarget = cardService.getByColId(id);
+            if(!cardInTarget.isEmpty()){
+                throw new Exception("This column contains card, should not be removed");
+            }
             if (target != null) {
                 target.setActive(false);
                 //update status
