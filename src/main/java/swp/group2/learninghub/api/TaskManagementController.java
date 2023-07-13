@@ -112,7 +112,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
-            User user = (User) session.getAttribute("user");
+//            User user = (User) session.getAttribute("user");
             newNote.setActive(true);
             Note target = noteService.createNote(newNote);
             logger.info(target.toString());

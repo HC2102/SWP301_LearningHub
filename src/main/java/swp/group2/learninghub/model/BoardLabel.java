@@ -13,9 +13,15 @@ import lombok.*;
 @ToString
 public class BoardLabel {
     @Id
+    @GeneratedValue(strategy =GenerationType.IDENTITY )
     private int id;
     private int boardId;
     private String name;
     private String color;
 
+    public BoardLabel(int boardId, String name, String color) {
+        this.boardId = boardId;
+        this.name = name;
+        this.color = color;
+    }
 }
