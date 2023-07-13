@@ -79,6 +79,25 @@ public class TaskManagementController {
         }
     }
 
+    @GetMapping("/cardDetails")
+    public ResponseEntity<ResponseObject> getCardSaveDataById(@RequestParam int cardId) {
+        try {
+            Card card = cardService.getById(cardId);
+            List<CardLabel> cardLabels = cardLabelService.getLabelsOfCard(cardId);
+            List<Integer> cardLabelId = new ArrayList<>();
+            for (CardLabel cl:
+                 cardLabels) {
+                int id = cl.getLabelId();
+                cardLabelId.add(id);
+            }
+            CardSaveData cardSaveData = new CardSaveData(card, cardLabelId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG, "Successfully", cardSaveData));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    FAILMSG, "Fail to getCardSaveDataById ", e.getMessage()));
+        }
+    }
     @PutMapping("/card")
     public ResponseEntity<ResponseObject> updateCard(@RequestBody Card updatedCard) {
         try {

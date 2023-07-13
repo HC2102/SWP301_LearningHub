@@ -67,6 +67,12 @@ public class CardLabelServiceImpl implements CardLabelService {
         }
         return labelList;
     }
+
+    @Override
+    public List<CardLabel> getLabelsOfCard(int cardId) {
+        return cardLabelDAO.findAllByCardId(cardId);
+    }
+
     @Override
     public ArrayList<Card> findCardsByLabel(int labelId) throws Exception {
         List<CardLabel> cardLabels = cardLabelDAO.findAllByLabelId(labelId);
