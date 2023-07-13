@@ -1,7 +1,9 @@
 package swp.group2.learninghub.service;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import swp.group2.learninghub.api.TaskManagementController;
 import swp.group2.learninghub.dao.BoardLabelDAO;
 import swp.group2.learninghub.dao.CoreLabelDAO;
 import swp.group2.learninghub.dao.NoteDAO;
@@ -17,7 +19,7 @@ public class BoardLabelServiceImpl implements BoardLabelService {
 
     private final CoreLabelDAO coreLabelDAO;
     private final BoardLabelDAO boardLabelDAO;
-
+    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskManagementController.class);
 
     private final NoteDAO noteDAO;
     @Autowired
@@ -57,17 +59,21 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     }
 
     @Override
-    public void addCoreLabelsToBoardLabels( String userId) {
+    public void addCoreLabelsToBoardLabels(String userId) {
         List<CoreLabel> coreLabels = coreLabelDAO.findAll();
+        logger.info(coreLabels.toString());
         int boardId = noteDAO.getMaxNoteIdByUsername(userId);
-        for (CoreLabel coreLabel : coreLabels) {
-            BoardLabel boardLabel = new BoardLabel();
-            boardLabel.setBoardId(boardId ); // Set the board ID to the core label ID
-            boardLabel.setName(coreLabel.getName());
-            boardLabel.setColor(coreLabel.getColor());
-
-            boardLabelDAO.save(boardLabel);
+        try{
+            for (CoreLabel coreLabel : coreLabels) {
+                // Lấy giá trị định danh cho mỗi coreLabel
+                BoardLabel boardLabel = new BoardLabel(boardId,coreLabel.getName(),coreLabel.getColor());
+                createLabel(boardLabel);
+            }
+        }catch(Exception e){
+            logger.error(e.getMessage());
         }
+
     }
+
 }
 
