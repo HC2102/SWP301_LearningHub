@@ -79,12 +79,46 @@ public class TaskManagementController {
         }
     }
 
-    @PutMapping("/card")
-    public ResponseEntity<ResponseObject> updateCard(@RequestBody Card updatedCard) {
+    @GetMapping("/cardDetails")
+    public ResponseEntity<ResponseObject> getCardSaveDataById(@RequestParam int cardId) {
         try {
-            cardService.updateCard(updatedCard);
+            Card card = cardService.getById(cardId);
+            List<CardLabel> cardLabels = cardLabelService.getLabelsOfCard(cardId);
+            List<Integer> cardLabelId = new ArrayList<>();
+            for (CardLabel cl:
+                 cardLabels) {
+                int id = cl.getLabelId();
+                cardLabelId.add(id);
+            }
+            CardSaveData cardSaveData = new CardSaveData(card, cardLabelId);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    SUCCESSMSG, "Success updating card data at " + updatedCard.getId(), updatedCard.toString()));
+                    SUCCESSMSG, "Successfully", cardSaveData));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    FAILMSG, "Fail to getCardSaveDataById ", e.getMessage()));
+        }
+    }
+
+    @Transactional
+    @PutMapping("/card")
+    public ResponseEntity<ResponseObject> updateCard(@RequestBody CardSaveData updatedCard) {
+        try {
+            Card card = updatedCard.getCard();
+            Card newCard = new Card(card.getId(), card.getColumnId(),
+                    card.getName(), card.getDescription(),
+                    card.getDateStart(), card.getDateEnd(),
+                    card.isActive(), card.getCreatedDate(), card.getPosition());
+            cardService.updateCard(newCard);
+            List<CardLabel> cardLabels = new ArrayList<>();
+            for (int id:
+                 updatedCard.getLabels()) {
+                System.out.println("new card label: " + id + ": " + new CardLabel(id, card.getId()));
+                cardLabels.add(new CardLabel(id, card.getId()));
+            }
+            cardLabelService.updateCardLabelData(card.getId(), cardLabels);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG, "Success updating card data at " + card.getId(), updatedCard));
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     FAILMSG, "Fail to update card ", e.getMessage()));
