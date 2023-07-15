@@ -62,6 +62,32 @@ public class UserController {
         }
     }
 
+    @Transactional
+    @PutMapping("/reactive")
+    public ResponseEntity<ResponseObject> reactiveUser(@RequestParam("email") String email, @RequestParam("password") String password) {
+        try {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            User target = userService.findByEmail(email).get(0); /* Session user */
+            if (target == null) {
+                throw new IllegalArgumentException("user information not found");
+            }
+            if(!passwordEncoder.matches(password, target.getPassword().trim())){
+                throw new IllegalArgumentException("password not match");
+            }
+            if (target.getRoleId().compareToIgnoreCase(ADMIN_ROLE) == 0) {
+                throw new IllegalArgumentException(UNAUTHORIZED);
+            }
+            target.setActive(true);
+            userService.update(target);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject(SUCCESSMSG, "reactive account successfully", target));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject(FAILMSG, "Failed reactive account: "
+                            + email, e.getMessage()));
+        }
+    }
+
     @GetMapping("/current")
     public User showCurrentUser() {
         return (User) session.getAttribute("user");
@@ -137,7 +163,8 @@ public class UserController {
                 throw new IllegalArgumentException("can not find email");
             }
             if (!u1.get(0).isActive()) {
-                throw new IllegalArgumentException("can not login because the account has been deactivated");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new ResponseObject(FAILMSG, "Login Successful!", "can not login because the account has been deactivated"));
             }
             if (passwordEncoder.matches(loginRequest.getPassword(), u1.get(0).getPassword().trim())) {
                 session.setAttribute("user", u1.get(0));
