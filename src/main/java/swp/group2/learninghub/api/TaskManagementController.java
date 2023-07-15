@@ -199,7 +199,7 @@ public class TaskManagementController {
         try {
             Board board = boardService.createBoard(newBoard);
             checkAccountAndActive();
-   //         boardLabelService.addCoreLabelsToBoardLabels();
+//            boardLabelService.addCoreLabelsToBoardLabels(new);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create board successfully!", board));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
