@@ -53,6 +53,7 @@ public class TaskManagementController {
 
     @GetMapping("/cardlabel")
     public void mapping(@RequestBody CardLabel cardLabel) {
+        checkAccountAndActive();
         cardLabelService.addLabelToCard(cardLabel);
     }
 
@@ -63,6 +64,7 @@ public class TaskManagementController {
             logger.info(data.getLabels().toString());
             //get card data
             cardService.addCard(data.getCard());
+            checkAccountAndActive();
             //get card id
             int cardId = cardService.getMaxCardId(data.getCard().getColumnId());
 //            add label to card
@@ -82,6 +84,7 @@ public class TaskManagementController {
     @GetMapping("/cardDetails")
     public ResponseEntity<ResponseObject> getCardSaveDataById(@RequestParam int cardId) {
         try {
+            checkAccountAndActive();
             Card card = cardService.getById(cardId);
             List<CardLabel> cardLabels = cardLabelService.getLabelsOfCard(cardId);
             List<Integer> cardLabelId = new ArrayList<>();
@@ -103,6 +106,7 @@ public class TaskManagementController {
     @PutMapping("/card")
     public ResponseEntity<ResponseObject> updateCard(@RequestBody CardSaveData updatedCard) {
         try {
+            checkAccountAndActive();
             Card card = updatedCard.getCard();
             Card newCard = new Card(card.getId(), card.getColumnId(),
                     card.getName(), card.getDescription(),
@@ -129,6 +133,7 @@ public class TaskManagementController {
     @DeleteMapping("/card")
     public ResponseEntity<ResponseObject> deleteCard(@RequestParam("id") int cardId) {
         try {
+            checkAccountAndActive();
             //delete all label fron card (avoid fk constrain)
             cardLabelService.deleteAllLabelByCardId(cardId);
             //then delete the card
@@ -146,6 +151,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
+            checkAccountAndActive();
 //            User user = (User) session.getAttribute("user");
             newNote.setActive(true);
             Note target = noteService.createNote(newNote);
@@ -168,6 +174,7 @@ public class TaskManagementController {
     @GetMapping("/cardLabel/card")
     public ArrayList<Card> getCardsByLabel(@RequestParam(name = "id") int labelId) {
         try {
+            checkAccountAndActive();
             return cardLabelService.findCardsByLabel(labelId);
         } catch (Exception e) {
             return new ArrayList<>();
@@ -177,6 +184,7 @@ public class TaskManagementController {
     @GetMapping("/cardLabel/label")
     public ResponseEntity<ResponseObject> getLabelsByCard(@RequestParam(name = "id") int cardId) {
         try {
+            checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("ok", "ok", cardLabelService.findLabelsInCard(cardId)));
         } catch (Exception e) {
@@ -190,6 +198,7 @@ public class TaskManagementController {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             Board board = boardService.createBoard(newBoard);
+            checkAccountAndActive();
    //         boardLabelService.addCoreLabelsToBoardLabels();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create board successfully!", board));
         } catch (Exception e) {
@@ -201,7 +210,7 @@ public class TaskManagementController {
     @PostMapping("/column")
     public String createColumn(@RequestBody KanbanColumn newKanbanColumn) {
         try {
-            columnService.createNewColumn(newKanbanColumn);
+                columnService.createNewColumn(newKanbanColumn);
             return "ok";
         } catch (Exception e) {
             return e.getMessage();
@@ -213,8 +222,9 @@ public class TaskManagementController {
         try {
             KanbanColumn target = columnService.getColumnById(id);
             List<Card> cardInTarget = cardService.getByColId(id);
+            checkAccountAndActive();
             if(!cardInTarget.isEmpty()){
-                throw new Exception("This column contains card, should not be removed");
+                throw new Exception("This column contains cards, should not be removed");
             }
             if (target != null) {
                 target.setActive(false);
@@ -236,6 +246,7 @@ public class TaskManagementController {
     @GetMapping("/column")
     public ResponseEntity<ResponseObject> getColumn(@RequestParam int boardId) {
         try {
+            checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success", "retrieved",
                             columnService.getColumnsByBoardId(boardId)));
@@ -292,12 +303,12 @@ public class TaskManagementController {
                 tempColData = col.getValue().getItems();
                 for (CardData cd : tempColData) {
                     tempCard = cardService.getById(cd.getId());
-                    //label handle
-                    cardLabels = cd.getLabels();
-                    for (BoardLabel cl : cardLabels) {
-                        updated.add(new CardLabel(cl.getId(), cd.getId()));
-                    }
-                    cardLabelService.updateCardLabelData(cd.getId(), updated);
+//                    //label handle
+//                    cardLabels = cd.getLabels();
+//                    for (BoardLabel cl : cardLabels) {
+//                        updated.add(new CardLabel(cl.getId(), cd.getId()));
+//                    }
+//                    cardLabelService.updateCardLabelData(cd.getId(), updated);
                     // handle the position of the card
                     tempCard.setPosition(tempPosition);
                     tempCard.setColumnId(tempColId);
@@ -330,6 +341,7 @@ public class TaskManagementController {
     @DeleteMapping("/notes")
     public ResponseEntity<ResponseObject> archiveNoteById(@RequestParam int noteId) {
         try {
+            checkAccountAndActive();
             Note note = noteService.archiveNoteById(noteId);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(SUCCESSMSG, "Archive note successfully!", note));
@@ -342,6 +354,7 @@ public class TaskManagementController {
     @GetMapping("/board")
     public ResponseEntity<ResponseObject> findBoardByNoteId(@RequestParam int noteId) {
         try {
+            checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "Find board by noteId successfully", boardService.findBoardByNoteId(noteId)
             ));
@@ -356,6 +369,10 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> findNoteById(@RequestParam("id") int id) {
         try {
             User u = checkAccountAndActive();
+            List<Note> noteList = noteService.showUserNotesByEmail(u.getEmail());
+            if(!isNoteBelongToUser(id,noteList)){
+                throw new Exception("this note is not belong to the current user! ");
+            }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve note of",
                     noteService.findNoteById(id)));
@@ -365,6 +382,14 @@ public class TaskManagementController {
         }
     }
 
+    public boolean isNoteBelongToUser(int id, List<Note> noteList){
+        for(Note n : noteList){
+            if(n.getId() == id){
+                return true;
+            }
+        }
+        return false;
+    }
     @PutMapping()
     public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
