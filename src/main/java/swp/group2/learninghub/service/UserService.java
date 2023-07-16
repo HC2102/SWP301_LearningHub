@@ -4,6 +4,7 @@ import java.util.List;
 
 import swp.group2.learninghub.model.User;
 import swp.group2.learninghub.model.sdi.ClientSdi;
+import swp.group2.learninghub.model.sdi.ContactSdi;
 
 public interface UserService {
     List<User> showUsers();
@@ -19,4 +20,6 @@ public interface UserService {
     public Boolean create(ClientSdi sdi);
 
     public void deactivate(String target);
+
+    public Boolean contact(ContactSdi sdi);
 }
