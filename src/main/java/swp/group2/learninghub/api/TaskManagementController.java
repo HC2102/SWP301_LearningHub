@@ -151,8 +151,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
-            checkAccountAndActive();
-//            User user = (User) session.getAttribute("user");
+            User user = checkAccountAndActive();;
             newNote.setActive(true);
             Note target = noteService.createNote(newNote);
             logger.info(target.toString());
@@ -160,7 +159,7 @@ public class TaskManagementController {
                     noteService.getMaxBoardIdByEmail(target.getUserId()), true);
             logger.info(newBoard.toString());
             boardService.createBoard(newBoard);
-            boardLabelService.addCoreLabelsToBoardLabels("truongpdhe170417@fpt.edu.vn");
+            boardLabelService.addCoreLabelsToBoardLabels(user.getEmail());
             target.setId(noteService.getMaxBoardIdByEmail(target.getUserId()));
 //            int i = target.getId();
 //            boardLabelService.addCoreLabelsToBoardLabels((i-4));
