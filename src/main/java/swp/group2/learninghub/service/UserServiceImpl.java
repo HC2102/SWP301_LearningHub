@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
     public Boolean contact(ContactSdi sdi) {
         try {
             DataMailDTO dataMail = new DataMailDTO();
-            dataMail.setTo("truongpdhe170417@fpt.edu.vn");
+            dataMail.setTo("truongpdhe170417@fpt.edu.vn ");
             dataMail.setSubject(Const.SendMailSubject.CONTRACT_REGISTER);
             Map<String, Object> props = new HashMap<>();
             props.put("name", sdi.getName());
