@@ -242,7 +242,7 @@ public class UserController {
                     new ResponseObject(FAILMSG, "Email not found!", ""));
         }
     }
-    @PostMapping(value = "/contract")
+    @PostMapping(value = "/contact")
     public ResponseEntity<ResponseObject> contact(
             @RequestBody ContactSdi contactSdi){
         try {
