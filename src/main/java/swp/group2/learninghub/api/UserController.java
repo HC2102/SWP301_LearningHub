@@ -1,5 +1,6 @@
 package swp.group2.learninghub.api;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.transaction.annotation.Transactional;
 import swp.group2.learninghub.model.ChangePass;
@@ -7,6 +8,7 @@ import swp.group2.learninghub.model.LoginRequest;
 import swp.group2.learninghub.model.ResponseObject;
 import swp.group2.learninghub.model.User;
 import swp.group2.learninghub.model.sdi.ClientSdi;
+import swp.group2.learninghub.model.sdi.ContactSdi;
 import swp.group2.learninghub.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -238,6 +240,21 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject(FAILMSG, "Email not found!", ""));
+        }
+    }
+    @PostMapping(value = "/contract")
+    public ResponseEntity<ResponseObject> contact(
+            @RequestBody ContactSdi contactSdi){
+        try {
+            Boolean success = userService.contact(contactSdi);
+
+            if (success) {
+                return ResponseEntity.ok(new ResponseObject("Email sent successfully"));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("Failed to send email"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject("Failed to send email"));
         }
     }
 }
