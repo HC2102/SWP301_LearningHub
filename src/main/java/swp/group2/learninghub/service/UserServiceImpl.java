@@ -5,6 +5,7 @@ import swp.group2.learninghub.dao.UserDAO;
 import swp.group2.learninghub.model.DataMailDTO;
 import swp.group2.learninghub.model.User;
 import swp.group2.learninghub.model.sdi.ClientSdi;
+import swp.group2.learninghub.model.sdi.ContactSdi;
 import swp.group2.learninghub.utils.Const;
 import swp.group2.learninghub.utils.DataUtils;
 
@@ -24,6 +25,11 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
+    }
+
+    @Override
+    public void update(User updatedUser) {
+        userDAO.updateUser(updatedUser.getEmail(),updatedUser.getRealName(),updatedUser.getPhoneNum());
     }
 
     @Override
@@ -101,4 +107,26 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("email can not be found");
         }
     }
+
+    @Override
+    public Boolean contact(ContactSdi sdi) {
+        try {
+            DataMailDTO dataMail = new DataMailDTO();
+            dataMail.setTo("truongpdhe170417@fpt.edu.vn");
+            dataMail.setSubject(Const.SendMailSubject.CONTRACT_REGISTER);
+            Map<String, Object> props = new HashMap<>();
+            props.put("name", sdi.getName());
+            props.put("phone", sdi.getPhone());
+            props.put("email", sdi.getEmail());
+            props.put("messenger", sdi.getMess());
+            dataMail.setProps(props);
+            mailService.sendHtmlMail(dataMail, Const.TemplateFileName.CONTACT_REGISTER);
+
+            return true;
+        } catch (MessagingException exp) {
+            exp.printStackTrace();
+        }
+        return false;
+    }
+
 }

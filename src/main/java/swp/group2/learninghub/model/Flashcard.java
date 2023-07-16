@@ -31,6 +31,38 @@ public class Flashcard {
         return setId;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setSetId(int setId) {
+        this.setId = setId;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public String getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
     @Override
     public String toString() {
         return "Flashcard{" +

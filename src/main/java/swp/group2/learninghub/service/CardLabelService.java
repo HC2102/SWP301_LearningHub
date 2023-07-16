@@ -16,6 +16,6 @@ public interface CardLabelService {
     public void removeLabelFromCard(int cardId, int labelId);
 
     public void deleteAllLabelByCardId(int cardId);
-
-
+    public void removeAllLabelsFromAllCards(int labelID);
+    public List<CardLabel> getLabelsOfCard(int cardId);
 }

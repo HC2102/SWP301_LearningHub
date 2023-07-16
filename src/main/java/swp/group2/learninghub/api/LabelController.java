@@ -114,6 +114,7 @@ public class LabelController {
             if (label == null || label.getBoardId() != boardId) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+            cardLabelService.removeAllLabelsFromAllCards(labelId);
             boardLabelService.deleteLabel(labelId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (Exception e) {
@@ -123,12 +124,11 @@ public class LabelController {
 
     @PutMapping("/updateL")
     public ResponseEntity<CoreLabel> updateLabel(
-            @RequestParam("id") int id,
             @RequestBody CoreLabel label) {
         try {
-            CoreLabel existingLabel = coreLabelService.getLabelById(id);
+            CoreLabel existingLabel = coreLabelService.getLabelById(label.getId());
             if (existingLabel != null) {
-                label.setId(id);
+                label.setId(label.getId());
                 CoreLabel updatedLabel = coreLabelService.updateLabel(label);
                 return new ResponseEntity<>(updatedLabel, HttpStatus.OK);
             } else {
@@ -211,4 +211,10 @@ public class LabelController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+//    @PostMapping("/board-labels")
+//    public void addCoreLabelsToBoardLabels(@RequestParam("id") int id) {
+//            boardLabelService.addCoreLabelsToBoardLabels(id);
+//
+//    }
 }

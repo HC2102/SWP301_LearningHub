@@ -40,6 +40,8 @@ public class TaskManagementController {
     HttpSession session;
     @Autowired
     private FeatureService featureService;
+    @Autowired
+    private  BoardLabelService boardLabelService;
     private static final int FEATURE_ID = 2;
     private static final String SUCCESSMSG = "Success";
     private static final String FAILMSG = "Fail";
@@ -51,19 +53,25 @@ public class TaskManagementController {
 
     @GetMapping("/cardlabel")
     public void mapping(@RequestBody CardLabel cardLabel) {
+        checkAccountAndActive();
         cardLabelService.addLabelToCard(cardLabel);
     }
 
     @PostMapping("/card")
     public ResponseEntity<ResponseObject> addCard(@RequestBody CardSaveData data) {
         try {
+            logger.info(data.toString());
+            logger.info(data.getLabels().toString());
             //get card data
             cardService.addCard(data.getCard());
+            checkAccountAndActive();
             //get card id
             int cardId = cardService.getMaxCardId(data.getCard().getColumnId());
 //            add label to card
-            for (int label : data.getLabels()) {
-                cardLabelService.addLabelToCard(new CardLabel(label, cardId));
+            if(!data.getLabels().isEmpty()){
+                for (int label : data.getLabels()) {
+                    cardLabelService.addLabelToCard(new CardLabel(label, cardId));
+                }
             }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "Success ", data.toString()));
@@ -73,12 +81,48 @@ public class TaskManagementController {
         }
     }
 
-    @PutMapping("/card")
-    public ResponseEntity<ResponseObject> updateCard(@RequestBody Card updatedCard) {
+    @GetMapping("/cardDetails")
+    public ResponseEntity<ResponseObject> getCardSaveDataById(@RequestParam int cardId) {
         try {
-            cardService.updateCard(updatedCard);
+            checkAccountAndActive();
+            Card card = cardService.getById(cardId);
+            List<CardLabel> cardLabels = cardLabelService.getLabelsOfCard(cardId);
+            List<Integer> cardLabelId = new ArrayList<>();
+            for (CardLabel cl:
+                 cardLabels) {
+                int id = cl.getLabelId();
+                cardLabelId.add(id);
+            }
+            CardSaveData cardSaveData = new CardSaveData(card, cardLabelId);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
-                    SUCCESSMSG, "Success updating card data at " + updatedCard.getId(), updatedCard.toString()));
+                    SUCCESSMSG, "Successfully", cardSaveData));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    FAILMSG, "Fail to getCardSaveDataById ", e.getMessage()));
+        }
+    }
+
+    @Transactional
+    @PutMapping("/card")
+    public ResponseEntity<ResponseObject> updateCard(@RequestBody CardSaveData updatedCard) {
+        try {
+            checkAccountAndActive();
+            Card card = updatedCard.getCard();
+            Card newCard = new Card(card.getId(), card.getColumnId(),
+                    card.getName(), card.getDescription(),
+                    card.getDateStart(), card.getDateEnd(),
+                    card.isActive(), card.getCreatedDate(), card.getPosition());
+            cardService.updateCard(newCard);
+            List<CardLabel> cardLabels = new ArrayList<>();
+            for (int id:
+                 updatedCard.getLabels()) {
+                System.out.println("new card label: " + id + ": " + new CardLabel(id, card.getId()));
+                cardLabels.add(new CardLabel(id, card.getId()));
+            }
+            cardLabelService.updateCardLabelData(card.getId(), cardLabels);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                    SUCCESSMSG, "Success updating card data at " + card.getId(), updatedCard));
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     FAILMSG, "Fail to update card ", e.getMessage()));
@@ -89,6 +133,7 @@ public class TaskManagementController {
     @DeleteMapping("/card")
     public ResponseEntity<ResponseObject> deleteCard(@RequestParam("id") int cardId) {
         try {
+            checkAccountAndActive();
             //delete all label fron card (avoid fk constrain)
             cardLabelService.deleteAllLabelByCardId(cardId);
             //then delete the card
@@ -106,6 +151,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
+            User user = checkAccountAndActive();;
             newNote.setActive(true);
             Note target = noteService.createNote(newNote);
             logger.info(target.toString());
@@ -113,7 +159,10 @@ public class TaskManagementController {
                     noteService.getMaxBoardIdByEmail(target.getUserId()), true);
             logger.info(newBoard.toString());
             boardService.createBoard(newBoard);
+            boardLabelService.addCoreLabelsToBoardLabels(user.getEmail());
             target.setId(noteService.getMaxBoardIdByEmail(target.getUserId()));
+//            int i = target.getId();
+//            boardLabelService.addCoreLabelsToBoardLabels((i-4));
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create note successfully!", newNote));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
@@ -124,6 +173,7 @@ public class TaskManagementController {
     @GetMapping("/cardLabel/card")
     public ArrayList<Card> getCardsByLabel(@RequestParam(name = "id") int labelId) {
         try {
+            checkAccountAndActive();
             return cardLabelService.findCardsByLabel(labelId);
         } catch (Exception e) {
             return new ArrayList<>();
@@ -133,6 +183,7 @@ public class TaskManagementController {
     @GetMapping("/cardLabel/label")
     public ResponseEntity<ResponseObject> getLabelsByCard(@RequestParam(name = "id") int cardId) {
         try {
+            checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("ok", "ok", cardLabelService.findLabelsInCard(cardId)));
         } catch (Exception e) {
@@ -146,6 +197,8 @@ public class TaskManagementController {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             Board board = boardService.createBoard(newBoard);
+            checkAccountAndActive();
+//            boardLabelService.addCoreLabelsToBoardLabels(new);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create board successfully!", board));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
@@ -156,7 +209,7 @@ public class TaskManagementController {
     @PostMapping("/column")
     public String createColumn(@RequestBody KanbanColumn newKanbanColumn) {
         try {
-            columnService.createNewColumn(newKanbanColumn);
+                columnService.createNewColumn(newKanbanColumn);
             return "ok";
         } catch (Exception e) {
             return e.getMessage();
@@ -167,6 +220,11 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> archiveColumnById(@RequestParam("id") int id) {
         try {
             KanbanColumn target = columnService.getColumnById(id);
+            List<Card> cardInTarget = cardService.getByColId(id);
+            checkAccountAndActive();
+            if(!cardInTarget.isEmpty()){
+                throw new Exception("This column contains cards, should not be removed");
+            }
             if (target != null) {
                 target.setActive(false);
                 //update status
@@ -187,6 +245,7 @@ public class TaskManagementController {
     @GetMapping("/column")
     public ResponseEntity<ResponseObject> getColumn(@RequestParam int boardId) {
         try {
+            checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject("success", "retrieved",
                             columnService.getColumnsByBoardId(boardId)));
@@ -243,12 +302,12 @@ public class TaskManagementController {
                 tempColData = col.getValue().getItems();
                 for (CardData cd : tempColData) {
                     tempCard = cardService.getById(cd.getId());
-                    //label handle
-                    cardLabels = cd.getLabels();
-                    for (BoardLabel cl : cardLabels) {
-                        updated.add(new CardLabel(cl.getId(), cd.getId()));
-                    }
-                    cardLabelService.updateCardLabelData(cd.getId(), updated);
+//                    //label handle
+//                    cardLabels = cd.getLabels();
+//                    for (BoardLabel cl : cardLabels) {
+//                        updated.add(new CardLabel(cl.getId(), cd.getId()));
+//                    }
+//                    cardLabelService.updateCardLabelData(cd.getId(), updated);
                     // handle the position of the card
                     tempCard.setPosition(tempPosition);
                     tempCard.setColumnId(tempColId);
@@ -281,6 +340,7 @@ public class TaskManagementController {
     @DeleteMapping("/notes")
     public ResponseEntity<ResponseObject> archiveNoteById(@RequestParam int noteId) {
         try {
+            checkAccountAndActive();
             Note note = noteService.archiveNoteById(noteId);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseObject(SUCCESSMSG, "Archive note successfully!", note));
@@ -293,6 +353,7 @@ public class TaskManagementController {
     @GetMapping("/board")
     public ResponseEntity<ResponseObject> findBoardByNoteId(@RequestParam int noteId) {
         try {
+            checkAccountAndActive();
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "Find board by noteId successfully", boardService.findBoardByNoteId(noteId)
             ));
@@ -307,6 +368,10 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> findNoteById(@RequestParam("id") int id) {
         try {
             User u = checkAccountAndActive();
+            List<Note> noteList = noteService.showUserNotesByEmail(u.getEmail());
+            if(!isNoteBelongToUser(id,noteList)){
+                throw new Exception("this note is not belong to the current user! ");
+            }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve note of",
                     noteService.findNoteById(id)));
@@ -316,6 +381,14 @@ public class TaskManagementController {
         }
     }
 
+    public boolean isNoteBelongToUser(int id, List<Note> noteList){
+        for(Note n : noteList){
+            if(n.getId() == id){
+                return true;
+            }
+        }
+        return false;
+    }
     @PutMapping()
     public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());

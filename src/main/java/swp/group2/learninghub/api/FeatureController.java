@@ -11,12 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/v1/feature")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class FeatureController {
     // variable and constructor section
     @Autowired
-    HttpSession session;
+    HttpSession session;        
     @Autowired
     private final FeatureService service;
 
@@ -30,7 +30,7 @@ public class FeatureController {
     public ResponseEntity<ResponseObject> showAll() {
         try {
             User sessionUser = (User) session.getAttribute("user");
-            if (sessionUser == null) {
+            if (sessionUser != null && sessionUser.getRoleId().compareToIgnoreCase("ADMIN")==0) {
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",
                         "feature list", service.showAll()));
             } else {
@@ -47,7 +47,7 @@ public class FeatureController {
     ResponseEntity<ResponseObject> setActive(@RequestParam("id") int featureId, @RequestParam("mess") String message) {
         try {
             User sessionUser = (User) session.getAttribute("user");
-            if (sessionUser != null) {
+            if (sessionUser != null && sessionUser.getRoleId().compareToIgnoreCase("ADMIN")==0) {
                 if (sessionUser.getRoleId().compareToIgnoreCase("ADMIN") == 0) {
                     service.setActive(featureId, message);
                     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Success",

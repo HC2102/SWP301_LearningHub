@@ -8,4 +8,6 @@ public interface BoardService {
     public Board updateBoard(Board board);
 
     public Board findBoardByNoteId(int noteId);
+    public Board findBoard(String name);
+
 }
