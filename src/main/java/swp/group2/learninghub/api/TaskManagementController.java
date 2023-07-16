@@ -345,6 +345,5 @@ public class TaskManagementController {
             throw new IllegalArgumentException("Feature is disable: " + feature.getDescription());
         }
         return userSession;
-
     }
 }
