@@ -47,11 +47,47 @@ public class FlashcardController {
             isFeatureActive();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve flashcard set of " +
-                            userSession.getEmail(),
+                    userSession.getEmail(),
                     flashcardService.showUserFlashcardSetByEmail(userSession.getEmail())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     new ResponseObject(FAILMSG, "account fail to connect: " + e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/set/latest")
+    public ResponseEntity<ResponseObject> showLatestSet() {
+        try {
+            /* user service information */
+            User userSession = (User) session.getAttribute("user");
+            /* check if user information is still in the session */
+            if (userSession == null) {
+                throw new IllegalArgumentException("Cannot find user information for this feature");
+            }
+            /* Check to see if the feature is active */
+            isFeatureActive();
+
+            List<FlashcardSet> flashcardSets = flashcardService.showUserFlashcardSetByEmail(userSession.getEmail());
+
+            /* Find the set with the highest ID */
+            FlashcardSet latestSet = null;
+            int maxSetId = -1;
+            for (FlashcardSet set : flashcardSets) {
+                if (set.getId() > maxSetId) {
+                    maxSetId = set.getId();
+                    latestSet = set;
+                }
+            }
+
+            if (latestSet != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+                        SUCCESSMSG, "Retrieve latest flashcard set of " + userSession.getEmail(), latestSet));
+            } else {
+                throw new IllegalStateException("No flashcard sets found for the user");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, "Failed to retrieve latest flashcard set: " + e.getMessage(), null));
         }
     }
 
