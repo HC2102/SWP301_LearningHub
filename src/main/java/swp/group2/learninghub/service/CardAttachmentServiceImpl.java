@@ -21,13 +21,13 @@ public class CardAttachmentServiceImpl implements CardAttachmentService {
 
     @Override
     public CardAttachment addAttachment(CardAttachment attachment) {
-        attachment.setUpdateDate(new Date());
+        attachment.setUpdatedDate(new Date());
         return cardAttachmentDAO.save(attachment);
     }
 
     @Override
     public CardAttachment updateAttachment(CardAttachment attachment) {
-        attachment.setUpdateDate(new Date());
+        attachment.setUpdatedDate(new Date());
         return cardAttachmentDAO.save(attachment);
     }
 

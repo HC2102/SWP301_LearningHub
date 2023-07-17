@@ -22,7 +22,7 @@ public class CardAttachment {
     private int id;
     private int cardId;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date updateDate;
+    private Date updatedDate;
     private  String filename;
     private String url;
 }
