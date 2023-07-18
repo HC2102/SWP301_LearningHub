@@ -122,7 +122,6 @@ public class UserController {
     @PutMapping("/profile")
     public ResponseEntity<ResponseObject> updateUserProfile(@RequestBody User updatedUser) {
         try {
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             User sessionUser = (User) session.getAttribute("user"); /* Session user */
             /* check if updated user is match with session user or session user is admin */
             if (sessionUser.getEmail().compareToIgnoreCase(updatedUser.getEmail()) != 0
@@ -130,7 +129,8 @@ public class UserController {
                 throw new IllegalArgumentException(UNAUTHORIZED);
             }
             userService.update(updatedUser);
-            session.setAttribute("user",updatedUser);
+            User newValue = userService.findByEmail(sessionUser.getEmail()).get(0);
+            session.setAttribute("user",newValue);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "update user profile successfully", updatedUser));
         } catch (Exception e) {
