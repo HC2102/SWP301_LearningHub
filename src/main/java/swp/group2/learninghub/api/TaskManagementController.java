@@ -263,6 +263,7 @@ public class TaskManagementController {
         try {
             //if feature is active
             checkAccountAndActive();
+            logger.info("kanbanData");
             //get all column in the table
             List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
             for (KanbanColumn k : kbList) {
@@ -295,6 +296,7 @@ public class TaskManagementController {
             int tempPosition;
             //if feature active
             checkAccountAndActive();
+            logger.info("kanbanDataUpdate");
             // search data for each column
             for (Map.Entry<String, ColumnData> col : boardData.entrySet()) {
                 tempPosition = 1;
@@ -327,6 +329,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> showAllNotes() {
         try {
             User u = checkAccountAndActive();
+            logger.info("showAllNotes");
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve notes of " +
                     u.getEmail(),
@@ -354,6 +357,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> findBoardByNoteId(@RequestParam int noteId) {
         try {
             checkAccountAndActive();
+            logger.info("findBoardByNoteId");
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "Find board by noteId successfully", boardService.findBoardByNoteId(noteId)
             ));
@@ -368,6 +372,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> findNoteById(@RequestParam("id") int id) {
         try {
             User u = checkAccountAndActive();
+            logger.info("findNoteById");
             List<Note> noteList = noteService.showUserNotesByEmail(u.getEmail());
             if(!isNoteBelongToUser(id,noteList)){
                 throw new Exception("this note is not belong to the current user! ");
@@ -393,6 +398,7 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
         Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
+            logger.info("updateNote");
             User u = checkAccountAndActive();
             Note updateNote = noteService.updateNote(note);
             Board updateBoard = new Board(note.getTitle(), note.getCreatedDate(),
@@ -411,6 +417,7 @@ public class TaskManagementController {
         Feature feature = featureService.findFeatureById(FEATURE_ID);
         User userSession = (User) session.getAttribute("user");
         logger.info(userSession.toString());
+        logger.info("===============checkAccountAndActive==============");
         if (userSession == null) {
             throw new IllegalArgumentException("can not find user information for this feature");
         }
