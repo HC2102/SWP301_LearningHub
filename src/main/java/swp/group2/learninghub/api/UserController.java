@@ -204,12 +204,18 @@ public class UserController {
     @PutMapping("/password")
     ResponseEntity<ResponseObject> changePass(@RequestBody ChangePass changePass) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String passRegex = "^(?=.*[\\d])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
         User u = (User) session.getAttribute("user");
         if (passwordEncoder.matches(changePass.getOldpass(), u.getPassword())) {
             if (changePass.getNewpass().trim().equals("") || changePass.getVerpass().trim().equals("")) {
                 return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                         .body(new ResponseObject(FAILMSG, "verification password and new password must not be blank", null));
             } else if (changePass.getNewpass().trim().equals(changePass.getVerpass().trim())) {
+                if(!changePass.getNewpass().matches(passRegex)){
+                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                            .body(new ResponseObject(FAILMSG, "New password is not in a right format. new password must contain, " +
+                                    "decimal, letter(both lower and upper case) and has 8 or more character length", null));
+                }
                 User userUpdate = new User(u.getEmail(), u.getRealName(), u.getPhoneNum(), changePass.getNewpass(),
                         u.getRoleId(),
                         u.isActive(), u.getSignupDate());
