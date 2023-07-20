@@ -2,6 +2,7 @@ package swp.group2.learninghub.api;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import swp.group2.learninghub.model.ChangePass;
 import swp.group2.learninghub.model.LoginRequest;
@@ -27,6 +28,7 @@ public class UserController {
     HttpSession session;
     @Autowired
     private UserService userService;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private static final String ADMIN_ROLE = "ADMIN";
     private static final String SUCCESSMSG = "Success";
@@ -192,6 +194,7 @@ public class UserController {
     @PostMapping("/register")
     ResponseEntity<ResponseObject> userRegister(@RequestBody User newUser) {
         try {
+            logger.info(newUser.toString());
             userService.register(newUser);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "account registed successfull", newUser));
@@ -204,17 +207,17 @@ public class UserController {
     @PutMapping("/password")
     ResponseEntity<ResponseObject> changePass(@RequestBody ChangePass changePass) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String passRegex = "^(?=.*[\\d])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+        String passRegex = "^(?=.*[\\d])(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).{8,}$";
         User u = (User) session.getAttribute("user");
         if (passwordEncoder.matches(changePass.getOldpass(), u.getPassword())) {
             if (changePass.getNewpass().trim().equals("") || changePass.getVerpass().trim().equals("")) {
                 return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                         .body(new ResponseObject(FAILMSG, "verification password and new password must not be blank", null));
-            } else if (changePass.getNewpass().trim().equals(changePass.getVerpass().trim())) {
+            } else if (changePass.getNewpass().equals(changePass.getVerpass())) {
                 if(!changePass.getNewpass().matches(passRegex)){
                     return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                             .body(new ResponseObject(FAILMSG, "New password is not in a right format. new password must contain, " +
-                                    "decimal, letter(both lower and upper case) and has 8 or more character length", null));
+                                    "decimal, letter(both lower and upper case) and has 8 or more character length. No space character are allow", null));
                 }
                 User userUpdate = new User(u.getEmail(), u.getRealName(), u.getPhoneNum(), changePass.getNewpass(),
                         u.getRoleId(),
@@ -238,6 +241,7 @@ public class UserController {
     public ResponseEntity<ResponseObject> forgetPassWord(
             @RequestParam(name = "email", required = false, defaultValue = "") String email) {
         List<User> u = userService.findByEmail(email);
+        logger.info(u.get(0).toString());
         if (!u.isEmpty()) {
             ClientSdi sdi = new ClientSdi(u.get(0).getRealName(), email, email);
             userService.create(sdi);

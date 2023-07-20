@@ -1,6 +1,8 @@
 package swp.group2.learninghub.service;
 
 import jakarta.mail.MessagingException;
+import org.slf4j.LoggerFactory;
+import swp.group2.learninghub.api.UserController;
 import swp.group2.learninghub.dao.UserDAO;
 import swp.group2.learninghub.model.DataMailDTO;
 import swp.group2.learninghub.model.User;
@@ -22,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
     @Autowired
     private MailService mailService;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
@@ -37,7 +40,7 @@ public class UserServiceImpl implements UserService {
         LocalDateTime now = LocalDateTime.now();
         String emailRegex = "^(.+)@(\\S+)$";
         String phoneRegex = "^\\d{10}$";
-        String passRegex = "^(?=.*[\\d])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+        logger.info(newUser.getPassword());
         newUser.setActive(true);
         newUser.setRoleId("USER");
         newUser.setSignupDate(Date.from(now.toInstant(ZoneOffset.UTC)));
@@ -47,9 +50,6 @@ public class UserServiceImpl implements UserService {
         }
         if (!newUser.getEmail().matches(emailRegex) || !newUser.getPhoneNum().matches(phoneRegex)) {
             throw new IllegalArgumentException("input field are not in right format");
-        }
-        if (!newUser.getPassword().trim().matches(passRegex)) {
-            throw new IllegalArgumentException("password is not in right format");
         }
         return userDAO.save(newUser);
     }
