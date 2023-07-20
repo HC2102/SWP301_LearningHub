@@ -17,7 +17,7 @@ public interface UserService {
 
     List<User> findByEmail(String name);
 
-    public Boolean create(ClientSdi sdi);
+    public String create(ClientSdi sdi);
 
     public void deactivate(String target);
 

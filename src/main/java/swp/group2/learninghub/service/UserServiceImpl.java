@@ -65,26 +65,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean create(ClientSdi sdi) {
+    public String create(ClientSdi sdi) {
+        String otp="";
         try {
             DataMailDTO dataMail = new DataMailDTO();
             dataMail.setTo(sdi.getEmail());
             dataMail.setSubject(Const.SendMailSubject.CLIENT_REGISTER);
-            String pass = DataUtils.generateTempPwd(6);
+            otp = DataUtils.generateTempPwd(6);
             Map<String, Object> props = new HashMap<>();
             props.put("name", sdi.getName());
             props.put("username", sdi.getUsername());
-            props.put("password", pass);
+            props.put("otp", otp);
             dataMail.setProps(props);
             mailService.sendHtmlMail(dataMail, Const.TemplateFileName.CLIENT_REGISTER);
-            List<User> u = findByEmail(sdi.getUsername());
-            u.get(0).setPassword(pass);
-            save(u.get(0));
-            return true;
+            return  otp;
         } catch (MessagingException exp) {
             exp.printStackTrace();
         }
-        return false;
+        return otp;
     }
 
     @Override

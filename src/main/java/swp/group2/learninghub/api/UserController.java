@@ -228,15 +228,29 @@ public class UserController {
         }
     }
 
+    @PutMapping("/reset/password")
+    ResponseEntity<ResponseObject> ResetPass(@RequestBody LoginRequest loginRequest) {
+        List<User> user=userService.findByEmail(loginRequest.getEmail().trim());
+        User u=user.get(0);
+        User userUpdate = new User(u.getEmail(), u.getRealName(), u.getPhoneNum(),loginRequest.getPassword(),
+                u.getRoleId(),
+                u.isActive(), u.getSignupDate());
+        userUpdate.setPassword(loginRequest.getPassword());
+        userService.save(userUpdate);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseObject(SUCCESSMSG, "change password successful!", userUpdate));
+
+    }
+
     @PostMapping(value = "/password")
     public ResponseEntity<ResponseObject> forgetPassWord(
             @RequestParam(name = "email", required = false, defaultValue = "") String email) {
         List<User> u = userService.findByEmail(email);
         if (!u.isEmpty()) {
             ClientSdi sdi = new ClientSdi(u.get(0).getRealName(), email, email);
-            userService.create(sdi);
+            String otp=userService.create(sdi);
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(SUCCESSMSG, "Send email success!", sdi));
+                    new ResponseObject(SUCCESSMSG, "Send email success!", otp));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject(FAILMSG, "Email not found!", ""));
