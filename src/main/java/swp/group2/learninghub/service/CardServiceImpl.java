@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.CardDAO;
 import swp.group2.learninghub.model.Card;
+import swp.group2.learninghub.model.CheckList;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import java.util.Optional;
 public class CardServiceImpl implements CardService {
     @Autowired
     public CardDAO cardDAO;
+    @Autowired
+    public CheckListService checkListService;
 
     @Override
     public int getMaxCardId(int columnId) {
@@ -25,6 +28,10 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void deleteCardById(int cardId) {
+        List<CheckList> test = checkListService.showCheckListByCardId(cardId);
+        if(!test.isEmpty() && test != null){
+            checkListService.deleteCheckListByCardId(cardId);
+        }
         cardDAO.deleteById(cardId);
     }
 
