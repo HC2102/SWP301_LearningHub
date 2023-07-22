@@ -169,6 +169,27 @@ public class FlashcardServiceImpl implements FlashcardService {
         return flashcardDAO.findById(flashcardId);
     }
 
+    @Override
+    public Flashcard updateOrCreateFlashcard(Flashcard flashcard) {
+        try {
+            Optional<Flashcard> existingFlashcard = flashcardDAO.findById(flashcard.getId());
+            if (existingFlashcard.isPresent()) {
+                // Flashcard already exists, update its properties
+                Flashcard updatedFlashcard = existingFlashcard.get();
+                updatedFlashcard.setSetId(flashcard.getSetId());
+                updatedFlashcard.setTerm(flashcard.getTerm());
+                updatedFlashcard.setDefinition(flashcard.getDefinition());
+                updatedFlashcard.setPosition(flashcard.getPosition());
+                return flashcardDAO.save(updatedFlashcard);
+            } else {
+                // Flashcard does not exist, create a new one
+                return flashcardDAO.save(flashcard);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to update or create flashcard: " + e.getMessage());
+        }
+    }
+
     public void learn() {
         throw new UnsupportedOperationException();
         // hold

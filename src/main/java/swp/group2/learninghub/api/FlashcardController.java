@@ -168,15 +168,27 @@ public class FlashcardController {
         }
     }
 
+//    @PostMapping("/card")
+//    ResponseEntity<ResponseObject> flashCardCreate(@RequestBody Flashcard flashcard) {
+//        try {
+//            flashcardService.createUpdate(flashcard);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    new ResponseObject(SUCCESSMSG, "Create or Update FlashCard successfull", flashcard));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+//                    new ResponseObject(FAILMSG, "Create or Update fail, reason: " + e.getMessage(), null));
+//        }
+//    }
+
     @PostMapping("/card")
-    ResponseEntity<ResponseObject> flashCardCreate(@RequestBody Flashcard flashcard) {
+    ResponseEntity<ResponseObject> updateOrCreateFlashcard(@RequestBody Flashcard flashcard) {
         try {
-            flashcardService.createUpdate(flashcard);
+            Flashcard updatedOrCreatedFlashcard = flashcardService.updateOrCreateFlashcard(flashcard);
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(SUCCESSMSG, "Create or Update FlashCard successfull", flashcard));
+                    new ResponseObject(SUCCESSMSG, "Update or create FlashCard successfully", updatedOrCreatedFlashcard));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject(FAILMSG, "Create or Update fail, reason: " + e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject(FAILMSG, "Update or create FlashCard failed: " + e.getMessage(), null));
         }
     }
 

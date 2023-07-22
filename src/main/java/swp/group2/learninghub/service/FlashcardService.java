@@ -34,4 +34,6 @@ public interface FlashcardService {
 
     public Optional<Flashcard> getFlashcardById(int flashcardId);
 
+    public Flashcard updateOrCreateFlashcard(Flashcard flashcard);
+
 }
