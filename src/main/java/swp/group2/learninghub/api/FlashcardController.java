@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -116,6 +118,18 @@ public class FlashcardController {
         }
     }
 
+    @GetMapping("/setById")
+    public ResponseEntity<ResponseObject> getSetById(@RequestParam int setId) {
+        try {
+            FlashcardSet flashcardSet = flashcardService.getSetById(setId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG,
+                    "Get set by ID successfully!", flashcardSet));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject(FAILMSG,
+                    "Failed to get set by ID: " + e.getMessage(), null));
+        }
+    }
+
     @DeleteMapping("/set")
     ResponseEntity<ResponseObject> archiveSet(@RequestParam(name = "id") int setId) {
         try {
@@ -154,15 +168,53 @@ public class FlashcardController {
         }
     }
 
+//    @PostMapping("/card")
+//    ResponseEntity<ResponseObject> flashCardCreate(@RequestBody Flashcard flashcard) {
+//        try {
+//            flashcardService.createUpdate(flashcard);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    new ResponseObject(SUCCESSMSG, "Create or Update FlashCard successfull", flashcard));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+//                    new ResponseObject(FAILMSG, "Create or Update fail, reason: " + e.getMessage(), null));
+//        }
+//    }
+
     @PostMapping("/card")
-    ResponseEntity<ResponseObject> flashCardCreate(@RequestBody Flashcard flashcard) {
+    ResponseEntity<ResponseObject> updateOrCreateFlashcard(@RequestBody Flashcard flashcard) {
         try {
-            flashcardService.createUpdate(flashcard);
+            Flashcard updatedOrCreatedFlashcard = flashcardService.updateOrCreateFlashcard(flashcard);
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject(SUCCESSMSG, "Create or Update FlashCard successfull", flashcard));
+                    new ResponseObject(SUCCESSMSG, "Update or create FlashCard successfully", updatedOrCreatedFlashcard));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
-                    new ResponseObject(FAILMSG, "Create or Update fail, reason: " + e.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject(FAILMSG, "Update or create FlashCard failed: " + e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/card")
+    public ResponseEntity<ResponseObject> updateFlashCard(@RequestBody Flashcard flashcard) {
+        try {
+            Flashcard updateFlashCard = new Flashcard(flashcard.getId(), flashcard.getSetId(), flashcard.getTerm(), flashcard.getDefinition(), flashcard.getPosition());
+            flashcardService.updateFlashcard(updateFlashCard);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseObject(SUCCESSMSG, "Update flashcard successfully!", updateFlashCard));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseObject(FAILMSG, "Failed to update flashcard: " + e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/flashcardBySetId")
+    public ResponseEntity<ResponseObject> getFlashcardsBySetId(@RequestParam int setId) {
+        try {
+            ArrayList<Flashcard> flashcards = flashcardService.getFlashcardsBySetId(setId);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG,
+                    "Get flashcard by setID successfully!", flashcards));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseObject(FAILMSG,
+                    "Failed to get flashcard by setID: " + e.getMessage(), null));
         }
     }
 
@@ -175,6 +227,27 @@ public class FlashcardController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
                     new ResponseObject(FAILMSG, "cannot deleted card: " + id + " reason: " + e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/card/latest")
+    public ResponseEntity<ResponseObject> showLatestFlashcard() {
+        try {
+            /* user service information */
+            User userSession = (User) session.getAttribute("user");
+            /* check if user information is still in the session */
+            if (userSession == null) {
+                throw new IllegalArgumentException("Cannot find user information for this feature");
+            }
+            /* Check to see if the feature is active */
+            isFeatureActive();
+            int flashcardId = flashcardService.getMaxFlashcardId();
+            Optional<Flashcard> latestFlashcard = flashcardService.getFlashcardById(flashcardId);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(SUCCESSMSG, "Show latest flashcard", latestFlashcard));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new ResponseObject(FAILMSG, "Failed to retrieve latest flashcard set: " + e.getMessage(), null));
         }
     }
 

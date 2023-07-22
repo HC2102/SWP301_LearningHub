@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class FlashcardServiceImpl implements FlashcardService {
 
     @Autowired
     public FlashcardServiceImpl(FlashcardDAO flashcardDAO, FlashcardSetDAO setDAO, HttpSession session,
-            FeatureService featureService) {
+                                FeatureService featureService) {
         this.flashcardDAO = flashcardDAO;
         this.setDAO = setDAO;
         this.session = session;
@@ -132,6 +133,61 @@ public class FlashcardServiceImpl implements FlashcardService {
         set.setLearned(!set.isLearned());
         setDAO.save(set);
         return (set.isLearned());
+    }
+
+    @Override
+    public void updateFlashcard(Flashcard flashcard) throws Exception {
+        try {
+            Optional<Flashcard> f = flashcardDAO.findById(flashcard.getId());
+            if (f.isEmpty()) {
+                throw new Exception("Flashcard ID is not exist!");
+            }
+            flashcardDAO.save(flashcard);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public FlashcardSet getSetById(int setId) {
+        User sessionUser = (User) session.getAttribute("user");
+        return setDAO.findSetById(setId, sessionUser.getEmail());
+    }
+
+    @Override
+    public ArrayList<Flashcard> getFlashcardsBySetId(int setId) {
+        return flashcardDAO.getFlashcardsBySetId(setId);
+    }
+
+    @Override
+    public int getMaxFlashcardId() {
+        return flashcardDAO.getMaxFlashcardId();
+    }
+
+    @Override
+    public Optional<Flashcard> getFlashcardById(int flashcardId) {
+        return flashcardDAO.findById(flashcardId);
+    }
+
+    @Override
+    public Flashcard updateOrCreateFlashcard(Flashcard flashcard) {
+        try {
+            Optional<Flashcard> existingFlashcard = flashcardDAO.findById(flashcard.getId());
+            if (existingFlashcard.isPresent()) {
+                // Flashcard already exists, update its properties
+                Flashcard updatedFlashcard = existingFlashcard.get();
+                updatedFlashcard.setSetId(flashcard.getSetId());
+                updatedFlashcard.setTerm(flashcard.getTerm());
+                updatedFlashcard.setDefinition(flashcard.getDefinition());
+                updatedFlashcard.setPosition(flashcard.getPosition());
+                return flashcardDAO.save(updatedFlashcard);
+            } else {
+                // Flashcard does not exist, create a new one
+                return flashcardDAO.save(flashcard);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to update or create flashcard: " + e.getMessage());
+        }
     }
 
     public void learn() {
