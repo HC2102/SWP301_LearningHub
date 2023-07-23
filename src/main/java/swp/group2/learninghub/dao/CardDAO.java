@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface CardDAO extends JpaRepository<Card,Integer> {
 
-//    List<Card> findAllByLabelsId(int labelId);
 
 
     @Query("select max(c.id) from Card c where c.columnId=:columnId")

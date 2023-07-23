@@ -5,25 +5,20 @@ import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.BoardDAO;
 import swp.group2.learninghub.dao.NoteDAO;
 import swp.group2.learninghub.model.Board;
-import swp.group2.learninghub.model.Note;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 public class BoardServiceImpl implements BoardService {
     @Autowired
     public BoardDAO boardDAO;
-//    @Autowired
-//    public BoardLabelService boardLabelService;
     @Autowired
     public NoteDAO noteDAO;
 
     @Override
     public Board createBoard(Board board) {
         board.setCreatedDate(Date.valueOf(LocalDate.now()));
-//        boardLabelService.addCoreLabelsToBoardLabels(board.getId());
         return boardDAO.save(board);
     }
 

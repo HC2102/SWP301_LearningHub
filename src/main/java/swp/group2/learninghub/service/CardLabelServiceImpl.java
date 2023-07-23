@@ -14,16 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.List;
 
 
 @Service
 public class CardLabelServiceImpl implements CardLabelService {
     private final CardLabelDAO cardLabelDAO;
 
-//    @Autowired
-//
-//    public CardLabelDAO cardLabelDAO;
     @Autowired
     public BoardLabelDAO boardLabelDAO;
     @Autowired

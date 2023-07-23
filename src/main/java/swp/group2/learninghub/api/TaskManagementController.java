@@ -1,7 +1,5 @@
 package swp.group2.learninghub.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +114,6 @@ public class TaskManagementController {
             List<CardLabel> cardLabels = new ArrayList<>();
             for (int id:
                  updatedCard.getLabels()) {
-                System.out.println("new card label: " + id + ": " + new CardLabel(id, card.getId()));
                 cardLabels.add(new CardLabel(id, card.getId()));
             }
             cardLabelService.updateCardLabelData(card.getId(), cardLabels);
@@ -149,20 +146,16 @@ public class TaskManagementController {
 
     @PostMapping("/notes")
     public ResponseEntity<ResponseObject> createNote(@RequestBody Note newNote) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
-            User user = checkAccountAndActive();;
+            User user = checkAccountAndActive();
             newNote.setActive(true);
             Note target = noteService.createNote(newNote);
-            logger.info(target.toString());
             Board newBoard = new Board(newNote.getTitle(), newNote.getCreatedDate(),
                     noteService.getMaxBoardIdByEmail(target.getUserId()), true);
             logger.info(newBoard.toString());
             boardService.createBoard(newBoard);
             boardLabelService.addCoreLabelsToBoardLabels(user.getEmail());
             target.setId(noteService.getMaxBoardIdByEmail(target.getUserId()));
-//            int i = target.getId();
-//            boardLabelService.addCoreLabelsToBoardLabels((i-4));
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create note successfully!", newNote));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
@@ -194,11 +187,9 @@ public class TaskManagementController {
 
     @PostMapping("/board")
     public ResponseEntity<ResponseObject> createBoard(@RequestBody Board newBoard) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             Board board = boardService.createBoard(newBoard);
             checkAccountAndActive();
-//            boardLabelService.addCoreLabelsToBoardLabels(new);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Create board successfully!", board));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
@@ -263,7 +254,6 @@ public class TaskManagementController {
         try {
             //if feature is active
             checkAccountAndActive();
-            logger.info("kanbanData");
             //get all column in the table
             List<KanbanColumn> kbList = columnService.getColumnsByBoardId(boardId);
             for (KanbanColumn k : kbList) {
@@ -291,12 +281,9 @@ public class TaskManagementController {
             int tempColId;
             List<CardData> tempColData;
             Card tempCard;
-            List<BoardLabel> cardLabels;
-            List<CardLabel> updated = new ArrayList<>();
             int tempPosition;
             //if feature active
             checkAccountAndActive();
-            logger.info("kanbanDataUpdate");
             // search data for each column
             for (Map.Entry<String, ColumnData> col : boardData.entrySet()) {
                 tempPosition = 1;
@@ -304,12 +291,6 @@ public class TaskManagementController {
                 tempColData = col.getValue().getItems();
                 for (CardData cd : tempColData) {
                     tempCard = cardService.getById(cd.getId());
-//                    //label handle
-//                    cardLabels = cd.getLabels();
-//                    for (BoardLabel cl : cardLabels) {
-//                        updated.add(new CardLabel(cl.getId(), cd.getId()));
-//                    }
-//                    cardLabelService.updateCardLabelData(cd.getId(), updated);
                     // handle the position of the card
                     tempCard.setPosition(tempPosition);
                     tempCard.setColumnId(tempColId);
@@ -320,7 +301,6 @@ public class TaskManagementController {
             return kanbanData(boardId);
         } catch (Exception e) {
             logger.warn(e.getMessage());
-            logger.warn(boardData.toString());
             return kanbanData(boardId);
         }
     }
@@ -329,7 +309,6 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> showAllNotes() {
         try {
             User u = checkAccountAndActive();
-            logger.info("showAllNotes");
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                     SUCCESSMSG, "retrieve notes of " +
                     u.getEmail(),
@@ -357,7 +336,6 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> findBoardByNoteId(@RequestParam int noteId) {
         try {
             checkAccountAndActive();
-            logger.info("findBoardByNoteId");
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "Find board by noteId successfully", boardService.findBoardByNoteId(noteId)
             ));
@@ -372,7 +350,6 @@ public class TaskManagementController {
     public ResponseEntity<ResponseObject> findNoteById(@RequestParam("id") int id) {
         try {
             User u = checkAccountAndActive();
-            logger.info("findNoteById");
             List<Note> noteList = noteService.showUserNotesByEmail(u.getEmail());
             if(!isNoteBelongToUser(id,noteList)){
                 throw new Exception("this note is not belong to the current user! ");
@@ -396,9 +373,7 @@ public class TaskManagementController {
     }
     @PutMapping()
     public ResponseEntity<ResponseObject> updateNote(@RequestBody Note note) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
-            logger.info("updateNote");
             User u = checkAccountAndActive();
             Note updateNote = noteService.updateNote(note);
             Board updateBoard = new Board(note.getTitle(), note.getCreatedDate(),
@@ -416,8 +391,6 @@ public class TaskManagementController {
     private User checkAccountAndActive() {
         Feature feature = featureService.findFeatureById(FEATURE_ID);
         User userSession = (User) session.getAttribute("user");
-        logger.info(userSession.toString());
-        logger.info("===============checkAccountAndActive==============");
         if (userSession == null) {
             throw new IllegalArgumentException("can not find user information for this feature");
         }

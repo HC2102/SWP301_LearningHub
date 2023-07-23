@@ -2,7 +2,6 @@ package swp.group2.learninghub.service;
 
 import jakarta.mail.MessagingException;
 import org.slf4j.LoggerFactory;
-import swp.group2.learninghub.api.UserController;
 import swp.group2.learninghub.dao.UserDAO;
 import swp.group2.learninghub.model.DataMailDTO;
 import swp.group2.learninghub.model.User;

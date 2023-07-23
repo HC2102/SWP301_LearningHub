@@ -1,6 +1,5 @@
 package swp.group2.learninghub.api;
 
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -194,7 +193,6 @@ public class UserController {
     @PostMapping("/register")
     ResponseEntity<ResponseObject> userRegister(@RequestBody User newUser) {
         try {
-            logger.info(newUser.toString());
             userService.register(newUser);
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseObject(SUCCESSMSG, "account registed successfull", newUser));
@@ -255,7 +253,6 @@ public class UserController {
     public ResponseEntity<ResponseObject> forgetPassWord(
             @RequestParam(name = "email", required = false, defaultValue = "") String email) {
         List<User> u = userService.findByEmail(email);
-        logger.info(u.get(0).toString());
         if (!u.isEmpty()) {
             ClientSdi sdi = new ClientSdi(u.get(0).getRealName(), email, email);
             String otp=userService.create(sdi);

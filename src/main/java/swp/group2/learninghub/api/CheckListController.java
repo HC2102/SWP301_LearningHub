@@ -32,7 +32,6 @@ public class CheckListController {
 
     @PostMapping()
     public ResponseEntity<ResponseObject> createCheckList(@RequestBody CheckList checkList) {
-        Logger logger = Logger.getLogger(CheckListController.class.getName());
         try {
             checkList.setChecked(true);
             CheckList newCheckList = checkListService.createCheckList(checkList);
@@ -46,7 +45,6 @@ public class CheckListController {
 
     @PutMapping("/archive")
     public ResponseEntity<ResponseObject> archiveCheckListById(@RequestParam("id") int id) {
-        Logger logger = Logger.getLogger(CheckListController.class.getName());
         try {
             CheckList newCheckList = checkListService.archiveCheckListById(id);
 
@@ -59,7 +57,6 @@ public class CheckListController {
 
     @PutMapping("/archive/cardid")
     public ResponseEntity<ResponseObject> archiveCheckListByCardId(@RequestParam("cardid") int cardID) {
-        Logger logger = Logger.getLogger(CheckListController.class.getName());
         try {
             List<CheckList> l=checkListService.archiveCheckListByCardId(cardID);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Archive checklist by cardID successfully!", l));
@@ -71,10 +68,8 @@ public class CheckListController {
 
     @GetMapping()
     public ResponseEntity<ResponseObject> showCheckListByCardId(@RequestParam("cardid") int cardID) {
-        Logger logger = Logger.getLogger(CheckListController.class.getName());
         try {
             List<CheckList> list = checkListService.showCheckListByCardId(cardID);
-
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(SUCCESSMSG, "Show checklist successfully!", list));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
@@ -96,7 +91,6 @@ public class CheckListController {
 
     @PutMapping()
     public ResponseEntity<ResponseObject> updateCheckList(@RequestBody CheckList checkList) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             CheckList updateCheckList = checkListService.updateCheckList(checkList);
 
@@ -111,7 +105,6 @@ public class CheckListController {
     @Transactional
     @DeleteMapping()
     public ResponseEntity<ResponseObject> deleteCheckListById(@RequestParam("id") int id) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
              checkListService.deleteCheckListById(id);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
@@ -124,7 +117,6 @@ public class CheckListController {
     @Transactional
     @DeleteMapping("/checklist")
     public ResponseEntity<ResponseObject> deleteCheckListByCardId(@RequestParam("cardid") int cardid) {
-        Logger logger = Logger.getLogger(TaskManagementController.class.getName());
         try {
             checkListService.deleteCheckListByCardId(cardid);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(

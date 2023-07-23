@@ -6,7 +6,6 @@ import org.springframework.data.repository.query.Param;
 
 import org.springframework.stereotype.Repository;
 import swp.group2.learninghub.model.Flashcard;
-import swp.group2.learninghub.model.FlashcardSet;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,12 +3,10 @@ package swp.group2.learninghub.service;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import swp.group2.learninghub.api.TaskManagementController;
 import swp.group2.learninghub.dao.BoardLabelDAO;
 import swp.group2.learninghub.dao.CoreLabelDAO;
 import swp.group2.learninghub.dao.NoteDAO;
 import swp.group2.learninghub.model.BoardLabel;
-import swp.group2.learninghub.model.Board;
 import swp.group2.learninghub.model.CoreLabel;
 
 import java.util.List;
@@ -19,7 +17,7 @@ public class BoardLabelServiceImpl implements BoardLabelService {
 
     private final CoreLabelDAO coreLabelDAO;
     private final BoardLabelDAO boardLabelDAO;
-    org.slf4j.Logger logger = LoggerFactory.getLogger(TaskManagementController.class);
+    org.slf4j.Logger logger = LoggerFactory.getLogger(BoardLabelServiceImpl.class);
 
     private final NoteDAO noteDAO;
     @Autowired
@@ -61,7 +59,6 @@ public class BoardLabelServiceImpl implements BoardLabelService {
     @Override
     public void addCoreLabelsToBoardLabels(String userId) {
         List<CoreLabel> coreLabels = coreLabelDAO.findAll();
-        logger.info(coreLabels.toString());
         int boardId = noteDAO.getMaxNoteIdByUsername(userId);
         try{
             for (CoreLabel coreLabel : coreLabels) {

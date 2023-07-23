@@ -22,11 +22,6 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public List<Card> getCardsByLabelId(int id) {
-        return null;
-    }
-
-    @Override
     public void deleteCardById(int cardId) {
         List<CheckList> test = checkListService.showCheckListByCardId(cardId);
         if(!test.isEmpty() && test != null){

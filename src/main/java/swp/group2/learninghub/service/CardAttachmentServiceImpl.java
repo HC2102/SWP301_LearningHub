@@ -1,7 +1,6 @@
 package swp.group2.learninghub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import swp.group2.learninghub.dao.CardAttachmentDAO;
 import swp.group2.learninghub.model.CardAttachment;
