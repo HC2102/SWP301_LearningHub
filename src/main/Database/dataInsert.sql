@@ -30,7 +30,7 @@ VALUES
 INSERT INTO `db_learninghub`.`kanban_column`
 (`id`,`board_id`, `name`, `position`, `is_Active`)
 VALUES
-(1,1,"To do",0,true),(2,1,"Doing",0,true);
+(1,1,"To do",0,true),(2,1,"Doing",0,true),(3,1,"Done",0,true);
 
 INSERT INTO `db_learninghub`.`card` (`column_id`, `name`, `description`, `date_start`, `date_end`, `is_Active`, `created_date`, `position`) 
 VALUES 
@@ -41,7 +41,8 @@ INSERT INTO `db_learninghub`.`board_label`
 (`id`,`board_id`,`name`,`color`)
 VALUES
 (1,1,'low','#A0C49D'),
-(2,1,'medium','#F2BE22');
+(2,1,'medium','#F2BE22'),
+(3,1,'high','#F24C3D');
 
 INSERT INTO `db_learninghub`.`card_label`
 (`label_id`,`card_id`)
